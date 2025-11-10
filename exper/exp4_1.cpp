@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include<algorithm>
+#include<math.h>
 int main(){
     double t;
     printf("please type a four-digit integer:\n");
@@ -25,23 +25,36 @@ int main(){
         i++;
         digits++;
     }
-    if (digits != 4) {
-        printf("%d-digit integer\n");
-        printf("invalid input, exit.");
-        return 0;
+    int sum = 0;
+    int d = digits-1;
+    for (int i=0;i<digits;i++){
+        sum += pow(10, d) * b[i];
+        d--;
     }
-    for (int i=0;i<4;i++){
-        printf("%d", b[i]);
-    }
+    printf("%d", sum);
     printf("\nmax:");
-    std::sort(b, b+4);
-    for (int i=3;i>=0;i--){
+    
+    // bubbling sort
+    for (int i = 0; i < digits - 1; ++i){
+        for (int j = i+1; j<digits; ++j){
+            int temp = b[i];
+            if (b[i] > b[j]){
+                b[i] = b[j];
+                b[j] = temp;
+            }
+        }
+    }
+
+    for (int i=digits-1;i>=0;i--){
         printf("%d", b[i]);
     }
     printf("\nmin:");
-    for (int i=0;i<4;++i){
-        printf("%d", b[i]);
+    sum = 0;
+    d = digits-1;
+    for (int i=0;i<digits;i++){
+        sum += pow(10, d) * b[i];
+        d--;
     }
+    printf("%d", sum);
     printf("\n");
-    
 }
