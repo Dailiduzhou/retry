@@ -2,15 +2,18 @@
 #include<math.h>
 int main(){
     double t;
-    printf("please type a four-digit integer:\n");
+    printf("please type an integer:\n");
+    // verification
     if (scanf("%lf", &t) != 1){
         printf("error: not a number, exit");
         return 0;
     }
+    // isfloat
     if ((int)t != t){
         printf("error: not an integer, exit");
         return 0;
     }
+    // isnegtive
     if (t<=0){
         printf("error: not a positive integer, exit");
         return 0;
@@ -31,6 +34,7 @@ int main(){
         sum += pow(10, d) * b[i];
         d--;
     }
+    // pow(10, d)取10的d次幂
     printf("%d", sum);
     printf("\nmax:");
     
