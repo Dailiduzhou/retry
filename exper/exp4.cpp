@@ -34,7 +34,17 @@ int main(){
         printf("%d", b[i]);
     }
     printf("\nmax:");
-    std::sort(b, b+4);
+    
+    // bubbling sort
+    for (int i = 0; i < digits - 1; ++i){
+        for (int j = i+1; j<digits; ++j){
+            int temp = b[i];
+            if (b[i] > b[j]){
+                b[i] = b[j];
+                b[j] = temp;
+            }
+        }
+    }
     for (int i=3;i>=0;i--){
         printf("%d", b[i]);
     }
