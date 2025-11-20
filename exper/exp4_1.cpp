@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<math.h>
+
 int main(){
     double t;
     printf("please type an integer:\n");
