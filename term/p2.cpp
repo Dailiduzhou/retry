@@ -27,7 +27,7 @@ int main() {
     }
 
     for (i = 0; i < n; i++)
-        printf("a[%d]=%d, %d", i, a[0][i], a[1][i]);
+        printf("a[%d]=%d, %d\n", i, a[0][i], a[1][i]);
 
     return 0;
 }
