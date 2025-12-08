@@ -49,7 +49,6 @@
 #include<stdio.h>
 
 int* myfunc(int* p, int n);
-void swapInt(int* a, int* b);
 
 int main(){
     int n = 7;
