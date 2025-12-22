@@ -29,6 +29,9 @@ char* shift(char* pstr, int n, char mode){
     if (n == 0)
         return pstr;
     
+    int len = strlen(pstr);
+    n = n%len;
+    
     switch (mode)
     {
     case 'L':
@@ -40,7 +43,7 @@ char* shift(char* pstr, int n, char mode){
     default:
         exit(-1);
     }
-    int len = strlen(pstr);
+    
     char* temp = (char*)malloc((len+1)*sizeof(char));
     for (int i = 0;i<len; i++){
         temp[(i+n+len)%len] = pstr[i];

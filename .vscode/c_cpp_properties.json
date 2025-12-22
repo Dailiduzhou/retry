@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**"
             ],
@@ -10,7 +10,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "compilerPath": "/usr/sbin/g++",
             "intelliSenseMode": "windows-gcc-x64"
         }
     ],
