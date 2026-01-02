@@ -29,7 +29,7 @@ int main(){
     eulerSieve(MAX_N);
 
     int start=-1, end = -1;
-    for (int i = 0;i<cnt;i++){
+    for (int i = 0;i<cnt-1;i++){
         for (int j = i+1;j<cnt;++j){
             if (prime[i]+target==prime[j]){
                 start = i;

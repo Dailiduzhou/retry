@@ -35,11 +35,9 @@ int main(){
         //             digits[j] = temp;
         //         }
         //     }
-        // }
-
-        // int asc = digits[0]*1000 + digits[1]*100 + digits[2]*10 + digits[3];
-
-        int asc = digits[0] + digits[1]*10+ digits[2]*100+digits[3]*1000;
+        
+        // 升序数：最小的数字在最高位
+        int asc = digits[3]*1000 + digits[2]*100 + digits[1]*10 + digits[0];
         
         num = desc - asc;
         count++;
