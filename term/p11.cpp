@@ -1,44 +1,44 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct Word {
     char word[80];
     unsigned count;
-    Word* next;
+    struct Word* next; // C语言标准写法建议加上struct，C++可省略
 } Word;
 
-Word* create_node(char* word, unsigned count){
+Word* create_node(const char* word, unsigned count){
     Word* new_node = (Word *)malloc(sizeof(Word));
     if (!new_node){
+        perror("Memory allocation failed");
         exit(1);
     }
-    strncpy(new_node->word, word, sizeof(new_node->word)-1);
-    new_node->count = 1;
-    new_node->next =NULL;
+    // 保证字符串以 \0 结尾
+    strncpy(new_node->word, word, sizeof(new_node->word) - 1);
+    new_node->word[sizeof(new_node->word) - 1] = '\0';
+    new_node->count = count;
+    new_node->next = NULL;
     return new_node;
 }
 
-void insert_node(Word** head, Word* new_node){
-    if (*head == NULL){
-        *head = new_node;
-    } else {
-        Word* current = *head;
-        while(current->next != NULL){
-            current = current->next;
-        }
-        current->next = new_node;
-    }
-}
-
-void search_word(Word* head, char* word){
-    Word* current = head;
-    while (current != NULL){
-        if (strcmp(current->word, word) == 0){
-            current->count += 1;
+// 核心逻辑修改：查找单词，找到则计数+1，没找到则插入到头部
+// 使用二级指针是因为可能会修改 head 的指向
+void add_word(Word** head, const char* token) {
+    Word* current = *head;
+    
+    // 1. 先查找是否存在
+    while (current != NULL) {
+        if (strcmp(current->word, token) == 0) {
+            current->count++;
+            return; // 找到了，处理完毕直接返回
         }
         current = current->next;
     }
+
+    Word* new_node = create_node(token, 1);
+    new_node->next = *head;
+    *head = new_node;
 }
 
 void swap_data(Word* a, Word* b){
@@ -47,16 +47,19 @@ void swap_data(Word* a, Word* b){
     strcpy(a->word, b->word);
     strcpy(b->word, temp_word);
     
-    // 交换count
     unsigned temp_count = a->count;
     a->count = b->count;
     b->count = temp_count;
 }
+
 void sort_list(Word* head){
-    Word* current = head;
-    
+    if (head == NULL || head->next == NULL) {
+        return;
+    }
+
+    Word* current;
+    Word* last = NULL;
     int swapped;
-    Word *last = NULL;
 
     do {
         swapped = 0;
@@ -66,7 +69,8 @@ void sort_list(Word* head){
             if (current->count < current->next->count) {
                 swap_data(current, current->next);
                 swapped = 1;
-            } else if (current->count == current->next->count && strcmp(current->word, current->next->word) > 0){
+            } else if (current->count == current->next->count && 
+                       strcmp(current->word, current->next->word) > 0){
                 swap_data(current, current->next);
                 swapped = 1;
             }
@@ -76,41 +80,38 @@ void sort_list(Word* head){
     } while (swapped);
 }
 
+// 新增：释放链表内存
+void free_list(Word* head) {
+    Word* current = head;
+    while (current != NULL) {
+        Word* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
 int main(){
     Word * head = NULL;
     char line[1001];
-    fgets(line, 1000, stdin);
 
-    int len = strlen(line);
-    if (line[len-1] == '\n') {
+    // 建议增加非空检查
+    if (fgets(line, 1000, stdin) == NULL) {
+        return 0;
+    }
+
+    // 处理换行符的安全写法
+    size_t len = strlen(line);
+    if (len > 0 && line[len-1] == '\n') {
         line[len-1] = '\0';
     }
 
-    char* copy = (char*)malloc(strlen(line) + 1);
-    strcpy(copy, line);
-    
-    char* token = strtok(copy, " ");
+    // 直接使用 line 进行分割，不需要 malloc 额外的 copy，减少内存碎片
+    // 分隔符增加了 \t (制表符) 和 \r (回车)，增强鲁棒性
+    char* token = strtok(line, " \t\r");
     while (token != NULL) {
-        Word* current = head;
-        int found = 0;
-        while (current != NULL) {
-            if (strcmp(current->word, token) == 0) {
-                current->count += 1;
-                found = 1;
-                break;
-            }
-            current = current->next;
-        }
-        
-        if (!found) {
-            Word* new_node = create_node(token, 1);
-            insert_node(&head, new_node);
-        }
-        
-        token = strtok(NULL, " ");
+        add_word(&head, token); // 调用封装好的函数
+        token = strtok(NULL, " \t\r");
     }
-    
-    free(copy);
     
     sort_list(head);
     
@@ -120,5 +121,8 @@ int main(){
         current = current->next;
     }
     
+    // 释放链表
+    free_list(head);
+
     return 0;
 }
