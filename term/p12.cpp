@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* sort_line(const char* line) { // 使用 const 保护原字符串不被修改
+char *sort_line(const char *line) { // 使用 const 保护原字符串不被修改
     // 1. 修复内存分配大小
     // sizeof(line) 是指针大小(8字节)，必须用 strlen 获取实际长度
     // +1 是为了存放结尾的 '\0'
-    char* res = (char*)malloc(strlen(line) + 1);
+    char *res = (char *)malloc(strlen(line) + 1);
     if (res == NULL) {
         perror("malloc failed");
         exit(1);
@@ -42,15 +42,15 @@ char* sort_line(const char* line) { // 使用 const 保护原字符串不被修�
 
 int main() {
     char line[81];
-    
+
     // 循环读取每一行
     while (fgets(line, sizeof(line), stdin) != NULL) {
         // strcspn 去除换行符是个好习惯，保留
         line[strcspn(line, "\n")] = '\0';
-        
+
         // 5. 修复内存泄露
         // 必须用指针接住返回值，打印完后 free
-        char* sorted = sort_line(line);
+        char *sorted = sort_line(line);
         if (sorted != NULL) {
             printf("%s\n", sorted);
             free(sorted); // 释放内存

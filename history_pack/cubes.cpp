@@ -1,8 +1,7 @@
-#include<iostream>
-double cube(double & x);
-double refcube(const double & ra);
-int main()
-{
+#include <iostream>
+double cube(double &x);
+double refcube(const double &ra);
+int main() {
     using namespace std;
     double num = 3.0;
 
@@ -14,13 +13,9 @@ int main()
     return 0;
 }
 
-double cube(double & x)
-{
+double cube(double &x) {
     x *= x * x;
     return x;
 }
 
-double refcube(const double & ra)
-{
-    return ra * ra *ra;
-}
+double refcube(const double &ra) { return ra * ra * ra; }

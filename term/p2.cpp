@@ -10,7 +10,8 @@ int main() {
 
     while (m <= n) {
         for (i = 0; i < n; i++) {
-            if (a[1][i]) continue;
+            if (a[1][i])
+                continue;
             k = i;
             for (j = i; j < n; j++)
                 if (a[1][j] == 0 && a[0][j] < a[0][k])

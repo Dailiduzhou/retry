@@ -51,5 +51,16 @@
         "text_encoding": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
+    },
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cStandard": "c11",
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "C_Cpp.clang_format_fallbackStyle": "LLVM",
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
     }
 }

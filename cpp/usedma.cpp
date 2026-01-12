@@ -1,7 +1,7 @@
-#include<iostream>
-#include"dma.h"
+#include "dma.h"
+#include <iostream>
 
-int main(){
+int main() {
     using std::cout;
     using std::endl;
 

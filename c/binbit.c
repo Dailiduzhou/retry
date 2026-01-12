@@ -1,16 +1,16 @@
-#include<stdio.h>
-#include<limits.h>
+#include <limits.h>
+#include <stdio.h>
 
-char * itobs(int, char *);
+char *itobs(int, char *);
 void show_bstr(const char *);
 
-int main(){
+int main() {
     char bin_str[CHAR_BIT * sizeof(int) + 1];
     int number;
 
     puts("Enter integers and see their binary representation.");
     puts("Non-numeric input terminates program.");
-    while (scanf("%d", &number) == 1){
+    while (scanf("%d", &number) == 1) {
         itobs(number, bin_str);
         printf("%d is ", number);
         show_bstr(bin_str);
@@ -19,7 +19,7 @@ int main(){
     puts("Bye!");
 }
 
-char * itobs(int n, char * ps){
+char *itobs(int n, char *ps) {
     int i;
     const static int size = CHAR_BIT * sizeof(int);
 
@@ -29,10 +29,10 @@ char * itobs(int n, char * ps){
     return ps;
 }
 
-void show_bstr(const char * str){
+void show_bstr(const char *str) {
     int i = 0;
 
-    while (str[i]){
+    while (str[i]) {
         putchar(str[i]);
         if (++i % 4 == 0 && str[i])
             putchar(' ');

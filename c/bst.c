@@ -1,7 +1,7 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 typedef struct Node {
     char name[20];
@@ -40,23 +40,28 @@ Node *bst_insert(Node *root, const char *name) {
 
 /* 查找 */
 Node *bst_find(Node *root, const char *name) {
-    if (!root) return NULL;
+    if (!root)
+        return NULL;
     int cmp = strcmp(name, root->name);
-    if (cmp == 0) return root;
-    if (cmp < 0) return bst_find(root->left, name);
+    if (cmp == 0)
+        return root;
+    if (cmp < 0)
+        return bst_find(root->left, name);
     return bst_find(root->right, name);
 }
 
 /* 找到最小值节点（用于删除） */
 static Node *bst_min_node(Node *root) {
     Node *cur = root;
-    while (cur && cur->left) cur = cur->left;
+    while (cur && cur->left)
+        cur = cur->left;
     return cur;
 }
 
 /* 删除节点 */
 Node *bst_delete(Node *root, const char *name) {
-    if (!root) return NULL;
+    if (!root)
+        return NULL;
     int cmp = strcmp(name, root->name);
     if (cmp < 0) {
         root->left = bst_delete(root->left, name);
@@ -85,7 +90,8 @@ Node *bst_delete(Node *root, const char *name) {
 
 /* 中序遍历（按字典序输出） */
 void bst_inorder(Node *root) {
-    if (!root) return;
+    if (!root)
+        return;
     bst_inorder(root->left);
     printf("%s\n", root->name);
     bst_inorder(root->right);
@@ -93,7 +99,8 @@ void bst_inorder(Node *root) {
 
 /* 先序遍历 */
 void bst_preorder(Node *root) {
-    if (!root) return;
+    if (!root)
+        return;
     printf("%s\n", root->name);
     bst_preorder(root->left);
     bst_preorder(root->right);
@@ -101,7 +108,8 @@ void bst_preorder(Node *root) {
 
 /* 后序遍历 */
 void bst_postorder(Node *root) {
-    if (!root) return;
+    if (!root)
+        return;
     bst_postorder(root->left);
     bst_postorder(root->right);
     printf("%s\n", root->name);
@@ -109,14 +117,16 @@ void bst_postorder(Node *root) {
 
 /* 释放整棵树 */
 void bst_free(Node *root) {
-    if (!root) return;
+    if (!root)
+        return;
     bst_free(root->left);
     bst_free(root->right);
     free(root);
 }
 
 int main(void) {
-    const char *names[] = {"Lily", "Bob", "Zoe", "Alice", "Mike", "Cindy", "David"};
+    const char *names[] = {"Lily", "Bob",   "Zoe",  "Alice",
+                           "Mike", "Cindy", "David"};
     size_t n = sizeof(names) / sizeof(names[0]);
 
     Node *root = NULL;
