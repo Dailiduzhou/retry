@@ -11,8 +11,8 @@ typedef struct Student {
     struct Student *next;
 } Student;
 
-Student* create_node(const char *name, int maths, int english, int c) {
-    Student *new_node = (Student*)malloc(sizeof(Student));
+Student *create_node(const char *name, int maths, int english, int c) {
+    Student *new_node = (Student *)malloc(sizeof(Student));
     if (!new_node) {
         printf("内存分配失败\n");
         exit(1);
@@ -97,8 +97,8 @@ void print_list(Student *head) {
 
     Student *current = head;
     while (current != NULL) {
-        printf("%-10s %-4d %-4d %-4d %-4d\n",
-               current->name, current->maths, current->english, current->c, current->total);
+        printf("%-10s %-4d %-4d %-4d %-4d\n", current->name, current->maths,
+               current->english, current->c, current->total);
         current = current->next;
     }
 }
@@ -114,19 +114,19 @@ void free_list(Student *head) {
 
 int main() {
     Student *head = NULL;
-    
+
     char name[11];
     int maths, english, c;
     while (scanf("%10s%d%d%d", name, &maths, &english, &c) == 4) {
-        Student* new_node = create_node(name, maths, english, c);
+        Student *new_node = create_node(name, maths, english, c);
         insert_node(&head, new_node);
     }
-    
+
     sort_list(head);
-    
+
     print_list(head);
 
     free_list(head);
-    
+
     return 0;
 }

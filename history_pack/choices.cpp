@@ -1,20 +1,14 @@
-#include<iostream>
+#include <iostream>
 
-template<typename T>
-T lesser(T a, T b)
-{
-    return a < b ? a : b;
-}
+template <typename T> T lesser(T a, T b) { return a < b ? a : b; }
 
-int lesser(int a, int b)
-{
+int lesser(int a, int b) {
     a = a < 0 ? -a : a;
     b = b < 0 ? -b : b;
     return a < b ? a : b;
 }
 
-int main()
-{
+int main() {
     using namespace std;
     int m = 20;
     int n = -30;
