@@ -25,6 +25,7 @@ void ClearList(LinkedList &L) {
     L->next = p->next;
     delete p;
   }
+  L->next = nullptr;
 }
 
 bool ListEmpty(LinkedList L) {
