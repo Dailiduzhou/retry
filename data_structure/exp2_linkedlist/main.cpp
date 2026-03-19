@@ -2,6 +2,8 @@
 #include <iostream>
 using namespace std;
 
+void testListInvert_L();
+
 int main() {
   LinkedList L;
   LNode e;
@@ -38,5 +40,32 @@ int main() {
   ListTraverse(L);
 
   DestoryList(L);
+
+  cout << endl << "Test ListInvert_L:" << endl;
+  testListInvert_L();
+
   return 0;
+}
+
+void testListInvert_L() {
+  LinkedList L;
+  LNode e;
+
+  InitList(L);
+
+  e.data = 1; ListInsert(L, 1, e);
+  e.data = 2; ListInsert(L, 2, e);
+  e.data = 3; ListInsert(L, 3, e);
+  e.data = 4; ListInsert(L, 4, e);
+  e.data = 5; ListInsert(L, 5, e);
+
+  cout << "Before invert:" << endl;
+  ListTraverse(L);
+
+  ListInvert_L(L);
+
+  cout << "After invert:" << endl;
+  ListTraverse(L);
+
+  DestoryList(L);
 }

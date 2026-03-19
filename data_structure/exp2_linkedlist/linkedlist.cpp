@@ -1,4 +1,5 @@
 #include "linkedlist.h"
+#include <cstddef>
 #include <iostream>
 using namespace std;
 void ErrorMessage(const char *s) {
@@ -92,6 +93,7 @@ void PriorElem(LinkedList L, LNode cur_e, LNode &pre_e) {
     pre_e = *p;
   }
 }
+
 void NextElem(LinkedList L, LNode cur_e, LNode &next) {
   LNode *p = L->next;
   if (!p) {
@@ -145,4 +147,79 @@ void ListTraverse(LinkedList L) {
     p = p->next;
   }
   cout << endl;
+}
+
+void ListDelete_L(LinkedList &L, LNode *p, ElemType &e) {
+  if (p == L) {
+    L = L->next;
+  }
+
+  LNode *q = L;
+  while (q->next != p) {
+    q = q->next;
+  }
+  q->next = p->next;
+  delete p;
+}
+
+LNode *LocateElem_L(LinkedList L, ElemType e) {
+  LNode *p = L;
+  while (p && p->data != e) {
+    p = p->next;
+  }
+
+  return p;
+}
+
+void ListInsert_L(LinkedList &L, LNode *p, LNode *s) {
+  if (L == p) {
+    s->next = L;
+    L = s;
+  }
+
+  LNode *q = L;
+  while (q->next != p) {
+    q = q->next;
+  }
+
+  q->next = s;
+  s->next = p;
+}
+
+LinkedList ListInvert_L(LinkedList &L) {
+  if (!L->next)
+    return L;
+  LNode *prev = NULL;
+  LNode *cur = L->next;
+  while (cur) {
+    LNode *q = cur->next;
+    cur->next = prev;
+    prev = cur;
+    cur = q;
+  }
+  L->next = prev;
+  return L;
+}
+
+void Union_L(LinkedList &La, LinkedList &Lb) {
+  if (!La) {
+    La = Lb;
+  }
+
+  while (Lb) {
+    LNode *e = Lb;
+    Lb = Lb->next;
+    LNode *p = La;
+    LNode *prev;
+    while (p && p->data != e->data) {
+      prev = p;
+      p = p->next;
+    }
+    if (p) {
+      delete e;
+    } else {
+      prev->next = e;
+      e->next = NULL;
+    }
+  }
 }
