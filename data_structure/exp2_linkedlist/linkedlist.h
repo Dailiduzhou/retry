@@ -21,5 +21,10 @@ void NextElem(LinkedList L, LNode cur_e, LNode &next);
 void ListInsert(LinkedList &L, int i, LNode e);
 void ListDelete(LinkedList &L, int i, LNode &e);
 void ListTraverse(LinkedList L);
+void ListDelete_L(LinkedList &L, LNode *p, ElemType &e);
+LNode *LocateElem_L(LinkedList L, ElemType e);
+void ListInsert_L(LinkedList &L, LNode *p, LNode *s);
+LinkedList ListInvert_L(LinkedList &L);
+void Union_L(LinkedList &La, LinkedList &Lb);
 
 #endif // !LINKEDLIST
