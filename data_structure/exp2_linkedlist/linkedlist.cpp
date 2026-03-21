@@ -223,3 +223,39 @@ void Union_L(LinkedList &La, LinkedList &Lb) {
     }
   }
 }
+
+// 循环链表
+void Union_OL(LinkedList &La, LinkedList &Lb) {
+  LNode *pa = La->next->next;
+  LNode *pb = Lb->next->next;
+  LNode *rc = La->next;
+
+  while (pa != La->next && pb != Lb->next) {
+    if (pa->data > pb->data) {
+      rc->next = pa;
+      rc = pa;
+      pa = pa->next;
+    } else if (pa->data < pb->data) {
+      rc->next = pb;
+      rc = pb;
+      pb = pb->next;
+    } else {
+      rc->next = pa;
+      rc = pa;
+      pa = pa->next;
+      LNode *qb = pb;
+      pb = pb->next;
+      delete qb;
+    }
+  }
+
+  if (pb == Lb->next) {
+    rc->next = pa;
+  } else {
+    rc->next = pb;
+    pb = Lb->next;
+    Lb->next = La->next;
+    La = Lb;
+  }
+  delete pb;
+}
