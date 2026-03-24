@@ -159,6 +159,7 @@ void ListDelete_L(LinkedList &L, LNode *p, ElemType &e) {
     q = q->next;
   }
   q->next = p->next;
+  e = p->data;
   delete p;
 }
 
