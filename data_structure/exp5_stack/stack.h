@@ -14,7 +14,7 @@ typedef struct {
 
 } SqStack;
 
-void InitStack_Sq(SqStack &S, int maxsize, int incresize);
+void InitStack_Sq(SqStack &S, int maxsize = STACK_INIT_SIZE, int incresize = STACK_INCREMENT);
 void DestroyStack(SqStack &S);
 void ClearStack(SqStack &S);
 bool StackEmpty(SqStack S);

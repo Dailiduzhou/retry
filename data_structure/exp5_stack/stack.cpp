@@ -3,8 +3,7 @@
 
 using namespace std;
 
-void InitStack_Sq(SqStack &S, int maxsize = STACK_INIT_SIZE,
-                  int incresize = STACK_INCREMENT) {
+void InitStack_Sq(SqStack &S, int maxsize, int incresize) {
   S.elem = new SElemType[maxsize];
 
   S.top = -1;
