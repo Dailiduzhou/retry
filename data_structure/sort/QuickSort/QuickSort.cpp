@@ -5,10 +5,10 @@ using namespace std;
 int Partition(SqList &L, int left, int right) {
   int i = left, j = right;
   while (i < j) {
-    while (i < j && L.r[j].key <= L.r[left].key) {
+    while (i < j && L.r[j].key >= L.r[left].key) {
       --j;
     }
-    while (i < j && L.r[i].key >= L.r[left].key) {
+    while (i < j && L.r[i].key <= L.r[left].key) {
       ++i;
     }
     swap(L.r[i], L.r[j]);
