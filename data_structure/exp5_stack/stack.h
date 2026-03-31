@@ -17,11 +17,12 @@ typedef struct {
 void InitStack_Sq(SqStack &S, int maxsize, int incresize);
 void DestroyStack(SqStack &S);
 void ClearStack(SqStack &S);
-void StackEmpty(SqStack S);
+bool StackEmpty(SqStack S);
 int StackLength(SqStack S);
-void GetTop_Sq(SqStack S, SElemType &e);
+bool GetTop_Sq(SqStack S, SElemType &e);
 void Push_Sq(SqStack &S, SElemType e);
-void Pop_Sq(SqStack &S, SElemType &e);
+bool Pop_Sq(SqStack &S, SElemType &e);
 void StackTraverse(SqStack S);
+void incrementStacksize(SqStack &S);
 
 #endif // !STACK_H
