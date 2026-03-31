@@ -3,7 +3,7 @@
 
 typedef int KeysType;
 
-#define MAX_NUM_OF_KEY 6
+#define MAX_NUM_OF_KEY 10
 #define RADIX 10
 #define MAXSIZE 10000
 
