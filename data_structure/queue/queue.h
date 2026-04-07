@@ -1,10 +1,10 @@
 #ifndef QUEQUE_H_
 #define QUEQUE_H_
 
-typedef int ElemType;
+typedef int QElemType;
 
 typedef struct LNode {
-  ElemType data;
+  QElemType data;
   struct LNode *next;
 } LNode, *LinkedList;
 
@@ -20,9 +20,9 @@ void DestroyQueue_L(LinkQueue &Q);
 void ClearQueue_L(LinkQueue &Q);
 bool QueQueueEmpty_L(LinkQueue Q);
 int QueueLength_L(LinkQueue Q);
-void GetHead(LinkQueue Q, ElemType &e);
-void Enqueue_L(LinkQueue &Q, ElemType e);
-void Dequeue_L(LinkQueue &Q, ElemType &e);
+void GetHead(LinkQueue Q, QElemType &e);
+void Enqueue_L(LinkQueue &Q, QElemType e);
+bool Dequeue_L(LinkQueue &Q, QElemType &e);
 void QueueTraverse(LinkQueue Q);
 
 #endif // !QUEQUE_H_
