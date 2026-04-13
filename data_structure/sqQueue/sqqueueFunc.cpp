@@ -47,17 +47,19 @@ void Yanghui(int n) {
   }
 }
 
-void division(int R[][], int n, int result[]) {
+void division(int R[][100], int n, int result[]) {
   int pre = n;
   int group = 0;
   SqQueue Q;
-  InitQueue_Sq(Q, n, QUEUEINCREMENT);
+  InitQueue_Sq(Q, n + 10, QUEUEINCREMENT);
 
   for (int e = 0; e < n; ++e) {
     Enqueue_Sq(Q, e);
   }
+
   int i = -1;
-  std::vector<int> clash(n);
+  int clash[100] = {0};
+
   while (!QueueEmpty_Sq(Q)) {
     Dequeue_Sq(Q, i);
     if (i < pre) {
@@ -74,7 +76,76 @@ void division(int R[][], int n, int result[]) {
     } else {
       Enqueue_Sq(Q, i);
     }
-
     pre = i;
   }
+}
+
+void printGroups(int result[], int n, int groupCount) {
+  for (int g = 1; g <= groupCount; ++g) {
+    SqQueue groupQueue;
+    InitQueue_Sq(groupQueue, n, QUEUEINCREMENT);
+
+    for (int i = 0; i < n; ++i) {
+      if (result[i] == g) {
+        Enqueue_Sq(groupQueue, i);
+      }
+    }
+
+    cout << "Group " << g << ": ";
+    QueueTraverse_Sq(groupQueue);
+    DestroyQueue_Sq(groupQueue);
+  }
+}
+
+int main() {
+  const int n = 6;
+  int R[100][100] = {0};
+
+  // Conflict relations: 0-1, 0-3, 1-2, 1-4, 2-5, 3-4, 4-5
+  R[0][1] = 1;
+  R[1][0] = 1;
+  R[0][3] = 1;
+  R[3][0] = 1;
+  R[1][2] = 1;
+  R[2][1] = 1;
+  R[1][4] = 1;
+  R[4][1] = 1;
+  R[2][5] = 1;
+  R[5][2] = 1;
+  R[3][4] = 1;
+  R[4][3] = 1;
+  R[4][5] = 1;
+  R[5][4] = 1;
+
+  cout << "Conflict Matrix:" << endl;
+  cout << "  0 1 2 3 4 5" << endl;
+  for (int i = 0; i < n; ++i) {
+    cout << i << " ";
+    for (int j = 0; j < n; ++j) {
+      cout << R[i][j] << " ";
+    }
+    cout << endl;
+  }
+  cout << endl;
+
+  int result[100] = {0};
+  division(R, n, result);
+
+  int maxGroup = 0;
+  for (int i = 0; i < n; ++i) {
+    if (result[i] > maxGroup) {
+      maxGroup = result[i];
+    }
+  }
+
+  cout << "Division Result: ";
+  for (int i = 0; i < n; ++i) {
+    cout << "[" << i << "]=" << result[i] << " ";
+  }
+  cout << endl << endl;
+
+  cout << "Groups:" << endl;
+  printGroups(result, n, maxGroup);
+
+  return 0;
 }
