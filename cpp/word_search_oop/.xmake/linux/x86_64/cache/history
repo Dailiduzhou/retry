@@ -1,0 +1,12 @@
+{
+    cmdlines = {
+        "xmake lua /usr/share/xmake/modules/private/utils/statistics.lua",
+        "xmake lua /usr/share/xmake/actions/build/cleaner.lua",
+        "xmake ",
+        "xmake run word_search_oop text.txt",
+        "xmake run word_search_oop text.txt",
+        "xmake run word_search_oop text.txt",
+        "xmake run word_search_oop ./text.txt",
+        "xmake run word_search_oop /home/mikufan/code/retry/cpp/word_search_oop/text.txt"
+    }
+}
