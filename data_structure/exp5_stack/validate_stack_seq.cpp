@@ -3,7 +3,7 @@
 
 using namespace std;
 
-bool validateStackSequence(vector<int>& in, vector<int>& out) {
+bool isValid(vector<int>& in, vector<int>& out) {
   if (in.size() != out.size()) {
     return false;
   }

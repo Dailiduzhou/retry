@@ -10,7 +10,7 @@ void testValidateStackSequence() {
   vector<int> in1 = {1, 2, 3};
   vector<int> out1 = {2, 1, 3};
 
-  bool result1 = validateStackSequence(in1, out1);
+  bool result1 = isValid(in1, out1);
 
   cout << "In: [1, 2, 3], Out: [2, 1, 3]" << endl;
   cout << "Result: " << (result1 ? "Valid" : "Invalid") << endl;
@@ -20,7 +20,7 @@ void testValidateStackSequence() {
   vector<int> in2 = {1, 2, 3};
   vector<int> out2 = {3, 2, 1};
 
-  bool result2 = validateStackSequence(in2, out2);
+  bool result2 = isValid(in2, out2);
 
   cout << "In: [1, 2, 3], Out: [3, 2, 1]" << endl;
   cout << "Result: " << (result2 ? "Valid" : "Invalid") << endl;
@@ -30,7 +30,7 @@ void testValidateStackSequence() {
   vector<int> in3 = {1, 2, 3, 4, 5};
   vector<int> out3 = {1, 2, 3, 4, 5};
 
-  bool result3 = validateStackSequence(in3, out3);
+  bool result3 = isValid(in3, out3);
 
   cout << "In: [1, 2, 3, 4, 5], Out: [1, 2, 3, 4, 5]" << endl;
   cout << "Result: " << (result3 ? "Valid" : "Invalid") << endl;
@@ -40,7 +40,7 @@ void testValidateStackSequence() {
   vector<int> in4 = {1, 2, 3};
   vector<int> out4 = {3, 1, 2};
 
-  bool result4 = validateStackSequence(in4, out4);
+  bool result4 = isValid(in4, out4);
   cout << "In: [1, 2, 3], Out: [3, 1, 2]" << endl;
   cout << "Result: " << (result4 ? "Valid" : "Invalid") << endl;
 
@@ -49,7 +49,7 @@ void testValidateStackSequence() {
   vector<int> in5 = {1, 2, 3};
   vector<int> out5 = {1, 2};
 
-  bool result5 = validateStackSequence(in5, out5);
+  bool result5 = isValid(in5, out5);
   cout << "In: [1, 2, 3], Out: [1, 2]" << endl;
   cout << "Result: " << (result5 ? "Valid" : "Invalid") << endl;
 }

@@ -1,4 +1,4 @@
-#include "stack.h"
+#include "sbitree.h"
 #include <iostream>
 
 using namespace std;
@@ -39,21 +39,11 @@ void DestroyStack(SqStack &S) {
   S.incrementsize = 0;
 }
 
-void ClearStack(SqStack &S) {
-  S.top = -1;
-}
+void ClearStack(SqStack &S) { S.top = -1; }
 
-bool StackEmpty(SqStack S) {
-  return S.top == -1;
-}
+bool StackEmpty(SqStack S) { return S.top == -1; }
 
-int StackLength(SqStack S) {
-  return S.top + 1;
-}
-
-bool StackFull(SqStack S) {
-  return S.top == S.stacksize - 1;
-}
+int StackLength(SqStack S) { return S.top + 1; }
 
 void incrementStacksize(SqStack &S) {
   SElemType *new_elem = new SElemType[S.stacksize + S.incrementsize];
@@ -72,6 +62,6 @@ void StackTraverse(SqStack S) {
     return;
   }
   for (int i = 0; i <= S.top; ++i) {
-    cout << S.elem[i] << endl;
+    cout << S.elem[i].ptr->data << endl;
   }
 }
