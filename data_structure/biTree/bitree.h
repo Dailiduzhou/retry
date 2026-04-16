@@ -1,7 +1,7 @@
 #ifndef BITREE_H_
 #define BITREE_H_
 
-typedef int TElemType;
+typedef char TElemType;
 typedef struct BiNode {
   TElemType data;
   struct BiNode *lchild, *rchild;
