@@ -19,6 +19,7 @@ void DestroyStack(SqStack &S);
 void ClearStack(SqStack &S);
 bool StackEmpty(SqStack S);
 int StackLength(SqStack S);
+bool StackFull(SqStack S);
 bool GetTop_Sq(SqStack S, SElemType &e);
 void Push_Sq(SqStack &S, SElemType e);
 bool Pop_Sq(SqStack &S, SElemType &e);

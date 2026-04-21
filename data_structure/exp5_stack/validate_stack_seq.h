@@ -5,5 +5,6 @@
 #include <vector>
 
 bool isValid(std::vector<int>& in, std::vector<int>& out);
+bool isValid_Sq(std::vector<int>& in, std::vector<int>& out);
 
 #endif
