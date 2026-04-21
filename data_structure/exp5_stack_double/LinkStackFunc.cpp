@@ -104,8 +104,8 @@ bool transform(char suffix[], char exp[]) {
   char ch = *p;
   int k = 0;
   char c;
-  int leftParenCount = 0;
-  bool expectOperand = true;
+  int leftParenCount = 0;    // 左括号计数
+  bool expectOperand = true; // 判断连续操作数
 
   while (ch != '\0') {
     if (ch == ' ' || ch == '\t') {
@@ -115,7 +115,7 @@ bool transform(char suffix[], char exp[]) {
 
     if (!OpMember(ch) && !isdigit(ch) && !isalpha(ch)) {
       DestroyStack_Char(S);
-      return false; 
+      return false;
     }
 
     if (isdigit(ch)) {
@@ -212,50 +212,58 @@ void test_transform_and_evaluate() {
   result = transform(suffix, test1);
   value = evaluation(suffix);
   cout << "Test 1: \"" << test1 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 7 ? " (Success, Expected: 7)" : " (Failed)") << endl;
+       << (result && value == 7 ? " (Success, Expected: 7)" : " (Failed)")
+       << endl;
 
   char test2[] = "3 + 4 * 5";
   result = transform(suffix, test2);
   value = evaluation(suffix);
   cout << "Test 2: \"" << test2 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 23 ? " (Success, Expected: 23)" : " (Failed)") << endl;
+       << (result && value == 23 ? " (Success, Expected: 23)" : " (Failed)")
+       << endl;
 
   char test3[] = "( 3 + 4 ) * 5";
   result = transform(suffix, test3);
   value = evaluation(suffix);
   cout << "Test 3: \"" << test3 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 35 ? " (Success, Expected: 35)" : " (Failed)") << endl;
+       << (result && value == 35 ? " (Success, Expected: 35)" : " (Failed)")
+       << endl;
 
   // 多位数测试
   char test4[] = "12 + 34";
   result = transform(suffix, test4);
   value = evaluation(suffix);
   cout << "Test 4: \"" << test4 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 46 ? " (Success, Expected: 46)" : " (Failed)") << endl;
+       << (result && value == 46 ? " (Success, Expected: 46)" : " (Failed)")
+       << endl;
 
   char test5[] = "123 + 456 * 7";
   result = transform(suffix, test5);
   value = evaluation(suffix);
   cout << "Test 5: \"" << test5 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 3315 ? " (Success, Expected: 3315)" : " (Failed)") << endl;
+       << (result && value == 3315 ? " (Success, Expected: 3315)" : " (Failed)")
+       << endl;
 
   char test6[] = "( 10 + 20 ) * ( 3 + 4 )";
   result = transform(suffix, test6);
   value = evaluation(suffix);
   cout << "Test 6: \"" << test6 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 210 ? " (Success, Expected: 210)" : " (Failed)") << endl;
+       << (result && value == 210 ? " (Success, Expected: 210)" : " (Failed)")
+       << endl;
 
   char test7[] = "100 - 50 / 5";
   result = transform(suffix, test7);
   value = evaluation(suffix);
   cout << "Test 7: \"" << test7 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 90 ? " (Success, Expected: 90)" : " (Failed)") << endl;
+       << (result && value == 90 ? " (Success, Expected: 90)" : " (Failed)")
+       << endl;
 
   char test8[] = "(( 1 + 2 ) * 3 - 4 ) / 5";
   result = transform(suffix, test8);
   value = evaluation(suffix);
   cout << "Test 8: \"" << test8 << "\" -> \"" << suffix << "\" = " << value
-       << (result && value == 1 ? " (Success, Expected: 1)" : " (Failed)") << endl;
+       << (result && value == 1 ? " (Success, Expected: 1)" : " (Failed)")
+       << endl;
 
   // 测试非法表达式
   cout << "\n=== Test Invalid Expressions ===" << endl;
