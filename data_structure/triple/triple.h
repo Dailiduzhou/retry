@@ -4,7 +4,7 @@
 // triple represents a sparse matrix
 
 const int MAXSIZE = 100;
-const int MAXMN = 20;
+const int MAXMN = 100;
 typedef int ElemType;
 
 typedef struct {
@@ -26,5 +26,10 @@ typedef struct {
   int nu;
   int tu;
 } RLSMatrix;
+
+enum class status : int { OK = 0, ERR = 1 };
+
+void createRpos(TSMatrix M);
+status FastTransposeSMatrix(TSMatrix M, TSMatrix &T);
 
 #endif // !TRIPLE_H_
