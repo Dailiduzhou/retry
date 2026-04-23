@@ -31,4 +31,11 @@ typedef struct {
   int n; // root nums
 } Ctree;
 
+typedef struct CSNode {
+  Elem data;
+  struct CSNode *firstchild, *nextsibling;
+} CSNode, *CSTree;
+
+int TreeDepth(CSTree T);
+
 #endif // !TREE_H_
