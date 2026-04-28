@@ -13,7 +13,17 @@ void Init() {
   InitQueue_L(Q);
 }
 
+bool valid_car(int car) {
+  if (car <= 0) {
+    cout << "Invalid car number: " << car << "\n";
+    return false;
+  }
+  return true;
+}
+
 void Enter(int car) {
+  if (!valid_car(car))
+    return;
   if (Push_Sq(S, car)) {
     cout << "Car " << car << " entered the lot\n";
   } else {
@@ -22,14 +32,28 @@ void Enter(int car) {
   }
 }
 
+bool car_in_lot(int car) {
+  for (int i = 0; i <= S.top; ++i)
+    if (S.elem[i] == car)
+      return true;
+  return false;
+}
+
 void Exit(int car) {
+  if (!valid_car(car))
+    return;
+  if (!car_in_lot(car)) {
+    cout << "Car " << car << " is not in the lot\n";
+    return;
+  }
   SqStack tmp;
   InitStack_Sq(tmp, S.stacksize, 0);
 
   int e;
   while (!StackEmpty(S)) {
     Pop_Sq(S, e);
-    if (e == car) break;
+    if (e == car)
+      break;
     cout << "Car " << e << " moves out temporarily\n";
     Push_Sq(tmp, e);
   }
@@ -49,8 +73,6 @@ void Exit(int car) {
     cout << "Car " << next << " moved from queue into lot\n";
   }
 }
-
-// --- unit tests ---
 
 void test_push_fails_when_full() {
   SqStack s;
@@ -102,40 +124,71 @@ void test_clear() {
 void test_exit_bottom_car() {
   // car at bottom exits — all others move out and back
   Init();
-  Enter(1); Enter(2); Enter(3);
+  Enter(1);
+  Enter(2);
+  Enter(3);
   Exit(1); // bottom car
   assert(StackLength(S) == 2);
   int e;
-  Pop_Sq(S, e); assert(e == 3);
-  Pop_Sq(S, e); assert(e == 2);
-  DestroyStack(S); DestroyQueue_L(Q);
+  Pop_Sq(S, e);
+  assert(e == 3);
+  Pop_Sq(S, e);
+  assert(e == 2);
+  DestroyStack(S);
+  DestroyQueue_L(Q);
   cout << "[PASS] exit bottom car\n";
 }
 
 void test_multiple_queue_drain() {
   // lot size 3, queue 3 cars; each exit pulls one from queue
   Init();
-  Enter(1); Enter(2); Enter(3); // lot full
-  Enter(4); Enter(5); Enter(6); // all queued
-  Exit(1); assert(StackLength(S) == 3); // 4 enters
-  Exit(2); assert(StackLength(S) == 3); // 5 enters
-  Exit(3); assert(StackLength(S) == 3); // 6 enters
-  Exit(4); assert(StackLength(S) == 2);
-  Exit(5); assert(StackLength(S) == 1);
-  Exit(6); assert(StackEmpty(S));
+  Enter(1);
+  Enter(2);
+  Enter(3); // lot full
+  Enter(4);
+  Enter(5);
+  Enter(6); // all queued
+  Exit(1);
+  assert(StackLength(S) == 3); // 4 enters
+  Exit(2);
+  assert(StackLength(S) == 3); // 5 enters
+  Exit(3);
+  assert(StackLength(S) == 3); // 6 enters
+  Exit(4);
+  assert(StackLength(S) == 2);
+  Exit(5);
+  assert(StackLength(S) == 1);
+  Exit(6);
+  assert(StackEmpty(S));
   assert(QueueEmpty_L(Q));
-  DestroyStack(S); DestroyQueue_L(Q);
+  DestroyStack(S);
+  DestroyQueue_L(Q);
   cout << "[PASS] multiple queue drain\n";
 }
 
 void test_exit_nonexistent_car() {
-  // exiting a car not in lot — all cars are restored, stack unchanged
+  // exiting a car not in lot — rejected, stack unchanged
   Init();
-  Enter(1); Enter(2);
-  Exit(99); // not in lot — cars 1 and 2 are restored
+  Enter(1);
+  Enter(2);
+  Exit(99); // not in lot — rejected
   assert(StackLength(S) == 2);
-  DestroyStack(S); DestroyQueue_L(Q);
+  DestroyStack(S);
+  DestroyQueue_L(Q);
   cout << "[PASS] exit non-existent car\n";
+}
+
+void test_invalid_car_number() {
+  Init();
+  Enter(0);  // invalid
+  Enter(-1); // invalid
+  assert(StackEmpty(S));
+  assert(QueueEmpty_L(Q));
+  Exit(0);  // invalid — no crash
+  Exit(-5); // invalid — no crash
+  DestroyStack(S);
+  DestroyQueue_L(Q);
+  cout << "[PASS] invalid car numbers rejected\n";
 }
 
 void run_tests() {
@@ -146,6 +199,7 @@ void run_tests() {
   test_exit_bottom_car();
   test_multiple_queue_drain();
   test_exit_nonexistent_car();
+  test_invalid_car_number();
   cout << "All tests passed.\n\n";
 }
 
@@ -157,8 +211,10 @@ void run_interactive() {
   char cmd;
   int car;
   while (cin >> cmd) {
-    if (cmd == 'Q' || cmd == 'q') break;
-    if (!(cin >> car)) break;
+    if (cmd == 'Q' || cmd == 'q')
+      break;
+    if (!(cin >> car))
+      break;
     if (cmd == 'A' || cmd == 'a')
       Enter(car);
     else if (cmd == 'D' || cmd == 'd')
