@@ -8,6 +8,18 @@ typedef struct BiNode {
 } BiNode, *BiTree;
 
 void Preorder(BiTree T, void (*visit)(BiTree));
+void InitBiTree(BiTree &T);
+void DestroyBiTree(BiTree &T);
+bool BiTreeEmpty(const BiTree &T);
+int BiTreeDepth(const BiTree &T);
+BiNode *Parent(BiTree T, BiNode *e);
+BiNode *LeftChild(BiTree T, BiNode *e);
+BiNode *RightChild(BiTree T, BiNode *e);
+BiNode *LeftSibling(BiTree T, BiNode *e);
+BiNode *RightSibling(BiTree T, BiNode *e);
+bool InsertChild(BiTree &T, BiNode *p, int LR, BiNode *child);
+bool DeleteChild(BiTree &T, BiNode *p, int LR);
+void Traverse(const BiTree &T);
 
 enum class TaskType : int { Visit = 0, Travel = 1 };
 

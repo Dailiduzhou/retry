@@ -109,3 +109,131 @@ double value(BiTree T, float opnd[]) {
 
   return v;
 }
+
+void InitBiTree(BiTree &T) { T = NULL; }
+
+void DestroyBiTree(BiTree &T) {
+  if (T) {
+    DestroyBiTree(T->lchild);
+    DestroyBiTree(T->rchild);
+    delete T;
+    T = NULL;
+  }
+}
+
+bool BiTreeEmpty(const BiTree &T) { return T == NULL; }
+
+BiNode *Parent(BiTree T, BiNode *e) {
+  if (!T || !e || T == e) {
+    return NULL;
+  }
+
+  if (T->lchild == e || T->rchild == e) {
+    return T;
+  }
+
+  BiNode *p = Parent(T->lchild, e);
+  if (p) {
+    return p;
+  }
+  return Parent(T->rchild, e);
+}
+
+BiNode *LeftChild(BiTree T, BiNode *e) {
+  if (!T || !e) {
+    return NULL;
+  }
+  return e->lchild;
+}
+
+BiNode *RightChild(BiTree T, BiNode *e) {
+  if (!T || !e) {
+    return NULL;
+  }
+  return e->rchild;
+}
+
+BiNode *LeftSibling(BiTree T, BiNode *e) {
+  if (!T || !e || T == e) {
+    return NULL;
+  }
+
+  BiNode *p = Parent(T, e);
+  if (p && p->rchild == e) {
+    return p->lchild;
+  }
+  return NULL;
+}
+
+BiNode *RightSibling(BiTree T, BiNode *e) {
+  if (!T || !e || T == e) {
+    return NULL;
+  }
+
+  BiNode *p = Parent(T, e);
+  if (p && p->lchild == e) {
+    return p->rchild;
+  }
+  return NULL;
+}
+
+bool InsertChild(BiTree &T, BiNode *p, int LR, BiNode *child) {
+  if (!T || !p || !child) {
+    return false;
+  }
+
+  BiNode *temp;
+  if (LR == 0) {
+    temp = p->lchild;
+    p->lchild = child;
+  } else {
+    temp = p->rchild;
+    p->rchild = child;
+  }
+
+  if (LR == 0) {
+    child->rchild = temp;
+  } else {
+    child->lchild = temp;
+  }
+
+  return true;
+}
+
+bool DeleteChild(BiTree &T, BiNode *p, int LR) {
+  if (!T || !p) {
+    return false;
+  }
+
+  if (LR == 0) {
+    DestroyBiTree(p->lchild);
+  } else {
+    DestroyBiTree(p->rchild);
+  }
+
+  return true;
+}
+
+void InorderTraverse(BiTree T, void (*visit)(BiTree)) {
+  if (T) {
+    InorderTraverse(T->lchild, visit);
+    visit(T);
+    InorderTraverse(T->rchild, visit);
+  }
+}
+
+static void PrintNode(BiTree T) {
+  if (T) {
+    cout << T->data << " ";
+  }
+}
+
+void Traverse(const BiTree &T) {
+  if (!T) {
+    cout << "Empty tree" << endl;
+    return;
+  }
+  cout << "Inorder traversal: ";
+  InorderTraverse(T, PrintNode);
+  cout << endl;
+}
