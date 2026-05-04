@@ -230,6 +230,8 @@ void Union_OL(LinkedList &La, LinkedList &Lb) {
   LNode *pa = La->next->next;
   LNode *pb = Lb->next->next;
   LNode *rc = La->next;
+  LNode *headA = La->next;
+  LNode *headB = Lb->next;
 
   while (pa != La->next && pb != Lb->next) {
     if (pa->data > pb->data) {
@@ -250,13 +252,23 @@ void Union_OL(LinkedList &La, LinkedList &Lb) {
     }
   }
 
-  if (pb == Lb->next) {
+  if (pa != headA) {
     rc->next = pa;
-  } else {
+    while (rc->next != headA) {
+      rc = rc->next;
+    }
+
+  } else if (pb != headB) {
     rc->next = pb;
-    pb = Lb->next;
-    Lb->next = La->next;
-    La = Lb;
+    while (rc->next != headB) {
+      rc = rc->next;
+    }
+    rc->next = headA;
+  } else {
+    rc->next = headA;
   }
-  delete pb;
+
+  delete headB;
+  La = rc;
+  Lb = NULL;
 }
