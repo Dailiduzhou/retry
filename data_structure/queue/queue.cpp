@@ -64,10 +64,12 @@ int QueueLength_L(LinkQueue Q) {
   return length;
 }
 
-void GetHead(LinkQueue Q, QElemType &e) {
+bool GetHead(LinkQueue Q, QElemType &e) {
   if (Q.front != Q.rear) {
     e = Q.front->next->data;
+    return true;
   }
+  return false;
 }
 
 void QueueTraverse(LinkQueue Q) {
