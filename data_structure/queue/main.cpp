@@ -11,6 +11,8 @@ void testInitQueue() {
   cout << "Queue length: " << QueueLength_L(Q) << endl;
   cout << "Is empty: " << QueQueueEmpty_L(Q) << endl;
   cout << endl;
+
+  DestroyQueue_L(Q);
 }
 
 void testEnqueue() {
