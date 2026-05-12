@@ -1,6 +1,7 @@
 #include "bitree.h"
 #include <cstddef>
 #include <iostream>
+#include <queue>
 using namespace std;
 
 const TElemType PLUS = -1;
@@ -194,7 +195,7 @@ bool InsertChild(BiTree &T, BiNode *p, int LR, BiNode *child) {
   if (LR == 0) {
     child->rchild = temp;
   } else {
-    child->lchild = temp;
+    child->rchild = temp;
   }
 
   return true;
@@ -236,4 +237,48 @@ void Traverse(const BiTree &T) {
   cout << "Inorder traversal: ";
   InorderTraverse(T, PrintNode);
   cout << endl;
+}
+
+void PreorderTraverse(BiTree T) {
+  if (T) {
+    cout << T->data << " ";
+    PreorderTraverse(T->lchild);
+    PreorderTraverse(T->rchild);
+  }
+}
+
+void PostorderTraverse(BiTree T) {
+  if (T) {
+    PostorderTraverse(T->lchild);
+    PostorderTraverse(T->rchild);
+    cout << T->data << " ";
+  }
+}
+
+void LevelTraverse(BiTree T) {
+  if (T == nullptr) {
+    return;
+  }
+  queue<BiTree> q;
+  q.push(T);
+
+  while (!q.empty()) {
+    BiTree node = q.front();
+    q.pop();
+    cout << node->data << " ";
+
+    if (node->lchild) {
+      q.push(node->lchild);
+    }
+    if (node->rchild) {
+      q.push(node->rchild);
+    }
+  }
+}
+
+BiNode *CreateBiNode(TElemType value) {
+  BiNode *newNode = new BiNode();
+  newNode->data = value;
+  newNode->lchild = newNode->rchild = nullptr;
+  return newNode;
 }
