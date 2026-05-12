@@ -192,11 +192,7 @@ bool InsertChild(BiTree &T, BiNode *p, int LR, BiNode *child) {
     p->rchild = child;
   }
 
-  if (LR == 0) {
-    child->rchild = temp;
-  } else {
-    child->rchild = temp;
-  }
+  child->rchild = temp;
 
   return true;
 }
@@ -273,6 +269,19 @@ void LevelTraverse(BiTree T) {
     if (node->rchild) {
       q.push(node->rchild);
     }
+  }
+}
+
+void CreateBiTree(BiTree &T) {
+  char ch;
+  cin >> ch;
+  if (ch == '#') {
+    T = NULL;
+  } else {
+    T = new BiNode;
+    T->data = ch;
+    CreateBiTree(T->lchild);
+    CreateBiTree(T->rchild);
   }
 }
 
