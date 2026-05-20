@@ -1,7 +1,6 @@
 #include "bitree.h"
 #include <cstddef>
 #include <cstring>
-#include <istream>
 #include <sstream>
 #include <string>
 
@@ -31,7 +30,7 @@ BiNode *swapHelper(BiNode *root) {
   }
 
   BiNode *temp = root->lchild;
-  root->rchild = root->rchild;
+  root->lchild = root->rchild;
   root->rchild = temp;
 
   swapHelper(root->lchild);
@@ -43,15 +42,15 @@ BiNode *swapHelper(BiNode *root) {
 void SwapChildren(BiTree &T) { swapHelper(T); }
 
 bool is_balanced(BiTree &T) {
-  if (T) {
+  if (!T) {
     return true;
-  } else {
-    int ldep = BiTreeDepth(T->lchild);
-    int rdep = BiTreeDepth(T->rchild);
+  }
 
-    if (ldep - rdep > 1 || rdep - ldep > 1) {
-      return false;
-    }
+  int ldep = BiTreeDepth(T->lchild);
+  int rdep = BiTreeDepth(T->rchild);
+
+  if (ldep - rdep > 1 || rdep - ldep > 1) {
+    return false;
   }
 
   return is_balanced(T->lchild) && is_balanced(T->rchild);
@@ -79,7 +78,7 @@ bool buildAndCheck(char *in) {
 }
 
 void TraverseCount(const BiTree &T, int &nodes) {
-  if (!T) {
+  if (T) {
     ++nodes;
     TraverseCount(T->lchild, nodes);
     TraverseCount(T->rchild, nodes);
@@ -96,15 +95,16 @@ int buildAndCount(char *in) {
   return nodes;
 }
 
-int main() {
-  char pre[] = "ABCDEFG";
-  char in[] = "CBEDFAGH";
-  int n = strlen(pre);
+BiNode *LowestCommonAncestor(BiTree root, BiNode *a, BiNode *b) {
+  if (!root || root == a || root == b) {
+    return root;
+  }
 
-  BiTree root = buildTree(pre, in, n);
+  BiNode *left = LowestCommonAncestor(root->lchild, a, b);
+  BiNode *right = LowestCommonAncestor(root->rchild, a, b);
 
-  PostorderTraverse(root);
-  DestroyBiTree(root);
-
-  return 0;
+  if (left && right) {
+    return root;
+  }
+  return left ? left : right;
 }
