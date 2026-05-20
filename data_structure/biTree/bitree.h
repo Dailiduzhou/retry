@@ -30,6 +30,8 @@ BiNode *CreateBiNode(TElemType value);
 
 void SwapChildren(BiTree &T);
 
+BiNode *LowestCommonAncestor(BiTree root, BiNode *a, BiNode *b);
+
 enum class TaskType : int { Visit = 0, Travel = 1 };
 
 #endif // !BITREE_H_
