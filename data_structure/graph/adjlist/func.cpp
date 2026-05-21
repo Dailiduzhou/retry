@@ -31,9 +31,9 @@ void CreateUDG(ALGraph &G) {
     G.vertices[j].firstarc = pj;
 
     if (IncInfo) {
-      int info;
-      cin >> info;
-      pj->info = pi->info = &info;
+      int *info = new int;
+      cin >> *info;
+      pj->info = pi->info = info;
     }
   }
 }
@@ -48,13 +48,13 @@ int LocateVex(const ALGraph &G, VertexType u) {
 }
 
 void InsertVex(ALGraph &G, VNode v) {
-  G.vexnum++;
   if (G.vexnum >= MAX_VERTEX_NUM) {
     cout << "Vertices full\n";
     return;
   }
   G.vertices[G.vexnum] = v;
-  v.firstarc = nullptr;
+  G.vertices[G.vexnum].firstarc = nullptr;
+  G.vexnum++;
 }
 
 void InsertArc(ALGraph &G, VNode v, VNode w) {
@@ -65,37 +65,19 @@ void InsertArc(ALGraph &G, VNode v, VNode w) {
     return;
   }
 
-  ArcNode *p = G.vertices[vpos].firstarc;
   ArcNode *newarc = new ArcNode;
-  newarc->nextarc = nullptr;
-  if (!p) {
-    G.vertices[vpos].firstarc = newarc;
-    newarc->adjvex = vpos;
-  }
-  while (!p->nextarc) {
-    p = p->nextarc;
-  }
+  newarc->adjvex = wpos;
+  newarc->nextarc = G.vertices[vpos].firstarc;
+  newarc->info = nullptr;
+  G.vertices[vpos].firstarc = newarc;
   G.arcnum++;
 
-  p->nextarc = newarc;
-  newarc->adjvex = wpos;
-
   if (G.kind == GraphKind::AG || G.kind == GraphKind::AN) {
-    ArcNode *p = G.vertices[vpos].firstarc;
-    ArcNode *newarc = new ArcNode;
-    newarc->nextarc = nullptr;
-    if (!p) {
-      G.vertices[vpos].firstarc = newarc;
-      newarc->adjvex = vpos;
-    }
-    while (!p->nextarc) {
-      p = p->nextarc;
-    }
-
-    p->nextarc = newarc;
-    newarc->adjvex = vpos;
-
-    G.arcnum++;
+    ArcNode *newarc2 = new ArcNode;
+    newarc2->adjvex = vpos;
+    newarc2->nextarc = G.vertices[wpos].firstarc;
+    newarc2->info = nullptr;
+    G.vertices[wpos].firstarc = newarc2;
   }
 }
 
@@ -110,15 +92,17 @@ void CreateGraph(ALGraph &G, vector<VNode> V, vector<pair<VNode, VNode>> VR) {
 }
 
 void DestroyGraph(ALGraph &G) {
-  for (auto &vex : G.vertices) {
-    ArcNode *p = vex.firstarc;
-    while (!p) {
-      InfoType *inf = p->info;
-      p->info = nullptr;
-      delete inf;
+  for (int i = 0; i < G.vexnum; i++) {
+    ArcNode *p = G.vertices[i].firstarc;
+    while (p) {
+      ArcNode *tmp = p;
       p = p->nextarc;
-      delete p;
+      if (tmp->info) {
+        delete tmp->info;
+      }
+      delete tmp;
     }
+    G.vertices[i].firstarc = nullptr;
   }
 
   G.arcnum = 0;
@@ -187,22 +171,34 @@ void DeleteArc(ALGraph &G, VNode v, VNode w) {
     pre = p;
     p = p->nextarc;
   }
-
-  pre->nextarc = p->nextarc;
+  if (!p) {
+    return;
+  }
+  if (pre) {
+    pre->nextarc = p->nextarc;
+  } else {
+    G.vertices[vpos].firstarc = p->nextarc;
+  }
   delete p;
 
   if (G.kind == GraphKind::AG || G.kind == GraphKind::AN) {
-
-    ArcNode *p = G.vertices[wpos].firstarc;
-    ArcNode *pre = nullptr;
-    while (p && p->adjvex != vpos) {
-      pre = p;
-      p = p->nextarc;
+    ArcNode *p2 = G.vertices[wpos].firstarc;
+    ArcNode *pre2 = nullptr;
+    while (p2 && p2->adjvex != vpos) {
+      pre2 = p2;
+      p2 = p2->nextarc;
     }
-
-    pre->nextarc = p->nextarc;
-    delete p;
+    if (!p2) {
+      return;
+    }
+    if (pre2) {
+      pre2->nextarc = p2->nextarc;
+    } else {
+      G.vertices[wpos].firstarc = p2->nextarc;
+    }
+    delete p2;
   }
+  G.arcnum--;
 }
 
 void DeleteVex(ALGraph &G, VNode v) {
@@ -253,10 +249,12 @@ void DeleteVex(ALGraph &G, VNode v) {
   G.vexnum--;
 }
 
-static void DFS(ALGraph &G, int v, vector<bool> &visited,
-                bool (*visit)(VNode)) {
+bool DFS(ALGraph &G, int v, vector<bool> &visited, bool (*visit)(VNode)) {
   visited[v] = true;
-  visit(G.vertices[v]);
+  int flag = visit(G.vertices[v]);
+  if (!flag) {
+    return false;
+  }
   for (ArcNode *p = G.vertices[v].firstarc; p; p = p->nextarc) {
     int w = p->adjvex;
     if (!visited[w]) {
@@ -269,24 +267,31 @@ void DFSTraverse(ALGraph &G, VNode v, bool (*visit)(VNode)) {
   vector<bool> visited(G.vexnum, false);
   int start = LocateVex(G, v.data);
   if (start != -1) {
-    DFS(G, start, visited, visit);
+    if (!DFS(G, start, visited, visit)) {
+      cout << "Error\n";
+      return;
+    }
   }
   for (int i = 0; i < G.vexnum; i++) {
     if (!visited[i]) {
-      DFS(G, i, visited, visit);
+      if (!DFS(G, i, visited, visit)) {
+        cout << "Error\n";
+        return;
+      }
     }
   }
 }
 
-static void BFS(ALGraph &G, int v, vector<bool> &visited,
-                bool (*visit)(VNode)) {
+bool BFS(ALGraph &G, int v, vector<bool> &visited, bool (*visit)(VNode)) {
   queue<int> q;
   visited[v] = true;
   q.push(v);
   while (!q.empty()) {
     int u = q.front();
     q.pop();
-    visit(G.vertices[u]);
+    if (!visit(G.vertices[u])) {
+      return false;
+    }
     for (ArcNode *p = G.vertices[u].firstarc; p; p = p->nextarc) {
       int w = p->adjvex;
       if (!visited[w]) {
@@ -301,11 +306,17 @@ void BFSTraverse(ALGraph &G, VNode v, bool (*visit)(VNode)) {
   vector<bool> visited(G.vexnum, false);
   int start = LocateVex(G, v.data);
   if (start != -1) {
-    BFS(G, start, visited, visit);
+    if (!BFS(G, start, visited, visit)) {
+      cout << "Error\n";
+      return;
+    }
   }
   for (int i = 0; i < G.vexnum; i++) {
     if (!visited[i]) {
-      BFS(G, i, visited, visit);
+      if (!BFS(G, i, visited, visit)) {
+        cout << "Error\n";
+        return;
+      }
     }
   }
 }
