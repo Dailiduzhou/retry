@@ -261,6 +261,7 @@ bool DFS(ALGraph &G, int v, vector<bool> &visited, bool (*visit)(VNode)) {
       DFS(G, w, visited, visit);
     }
   }
+  return true;
 }
 
 void DFSTraverse(ALGraph &G, VNode v, bool (*visit)(VNode)) {
@@ -300,6 +301,7 @@ bool BFS(ALGraph &G, int v, vector<bool> &visited, bool (*visit)(VNode)) {
       }
     }
   }
+  return true;
 }
 
 void BFSTraverse(ALGraph &G, VNode v, bool (*visit)(VNode)) {
