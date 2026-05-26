@@ -3,24 +3,31 @@
 bool Search_DLTree(const DLTree &rt, const char line[], int count[], int j,
                    int &k) {
   k = 0;
-  bool found = false;
   DLTNode *p = rt->first;
-  while (p && !found) {
+  int best_k = 0;
+  int best_idx = -1;
+
+  while (p) {
     while (p && p->symbol < line[j + k]) {
       p = p->next;
     }
     if (!p || p->symbol > line[j + k]) {
       break;
-    } else {
-      p = p->first;
-      ++k;
-      if (p && p->kind == NodeKind::LEAF) {
-        count[p->idx]++;
-        found = true;
-      }
+    }
+    p = p->first;
+    ++k;
+    if (p && p->kind == NodeKind::LEAF) {
+      best_k = k;
+      best_idx = p->idx;
     }
   }
-  return found;
+
+  if (best_idx >= 0) {
+    count[best_idx]++;
+    k = best_k;
+    return true;
+  }
+  return false;
 }
 
 void setmatch(const DLTree &root, char line[], int count[]) {
@@ -62,32 +69,23 @@ bool Insert_DLTree(DLTree &root, KeysType K, int &n) {
       }
       s->next = p;
       p = s;
+      f = s;
       break;
     }
   }
 
-  if (p && j == K.num) {
-    if (p->first && p->first->kind == NodeKind::LEAF) {
+  if (j == K.num) {
+    if (f->first && f->first->kind == NodeKind::LEAF) {
       return false;
-    } else {
-      while (j <= K.num) {
-        DLTNode *s = new DLTNode;
-        s->next = p->first;
-        p->first = s;
-        p = s;
-        if (j < K.num) {
-          s->kind = NodeKind::BRANCH;
-          s->symbol = K.ch[j++];
-          s->first = nullptr;
-        } else {
-          s->kind = NodeKind::LEAF;
-          s->symbol = '$';
-          ++n;
-          s->idx = n;
-        }
-      }
-      return true;
     }
+    DLTNode *s = new DLTNode;
+    s->kind = NodeKind::LEAF;
+    s->symbol = '$';
+    s->next = f->first;
+    f->first = s;
+    ++n;
+    s->idx = n;
+    return true;
   }
 
   if (j < K.num) {
