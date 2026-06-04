@@ -108,6 +108,7 @@ private:
         if (children[idx]->n < T)
           fill(idx);
 
+        // 如果是最后一个孩子，并且跟前一个孩子合并了
         if (last_child && idx > n)
           children[idx - 1]->remove(key);
         else
@@ -169,6 +170,7 @@ private:
       Node *child = children[idx];
       Node *sibling = children[idx - 1];
 
+      // 空出位置
       for (int i = child->n - 1; i >= 0; --i)
         child->keys[i + 1] = child->keys[i];
 
@@ -177,11 +179,14 @@ private:
           child->children[i + 1] = child->children[i];
       }
 
+      // 把父节点的关键字降下来
       child->keys[0] = keys[idx - 1];
 
+      // 非叶子节点继承sibling的最后一个节点的孩子
       if (!child->leaf)
         child->children[0] = sibling->children[sibling->n];
 
+      // 把sibling的节点提升上去
       keys[idx - 1] = sibling->keys[sibling->n - 1];
 
       child->n += 1;
@@ -215,8 +220,10 @@ private:
       Node *child = children[idx];
       Node *sibling = children[idx + 1];
 
+      // 父节点降下来
       child->keys[T - 1] = keys[idx];
 
+      // 获取兄弟的节点
       for (int i = 0; i < sibling->n; ++i)
         child->keys[i + T] = sibling->keys[i];
 
@@ -225,9 +232,11 @@ private:
           child->children[i + T] = sibling->children[i];
       }
 
+      // 补全消失的父节点位置
       for (int i = idx + 1; i < n; ++i)
         keys[i - 1] = keys[i];
 
+      // 跳过合并的节点
       for (int i = idx + 2; i <= n; ++i)
         children[i - 1] = children[i];
 
@@ -327,6 +336,7 @@ public:
     }
 
     if (root->n == 2 * T - 1) {
+      // 给根节点虚造了一个父节点
       Node *s = new Node(false);
       s->children[0] = root;
       s->split_child(0, root);
