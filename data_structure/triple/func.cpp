@@ -36,6 +36,8 @@ status FastTransposeSMatrix(TSMatrix M, TSMatrix &T) {
   }
   return status::OK;
 }
+
+// 转换为带rpos的矩阵
 void TSMatrix2RLSMatrix(const TSMatrix &M, RLSMatrix &R) {
   R.mu = M.mu;
   R.nu = M.nu;
@@ -58,7 +60,7 @@ status matrixProduct(const TSMatrix &A, const TSMatrix &B, TSMatrix &C) {
     return status::ERR;
   }
 
-  RLSMatrix RA, RB;
+  RLSMatrix RA = {}, RB = {};
   TSMatrix2RLSMatrix(A, RA);
   TSMatrix2RLSMatrix(B, RB);
 
@@ -98,5 +100,62 @@ status matrixProduct(const TSMatrix &A, const TSMatrix &B, TSMatrix &C) {
       }
     }
   }
+  return status::OK;
+}
+
+status matrixAdd(const TSMatrix &A, const TSMatrix &B, TSMatrix &C) {
+  if (A.mu != B.mu || A.nu != B.nu) {
+    return status::ERR;
+  }
+
+  C.mu = A.mu;
+  C.nu = A.nu;
+  C.tu = 0;
+
+  int pa = 1, pb = 1;
+  // 假设是行先序排列，三种状况用于保持顺序
+  while (pa <= A.tu && pb <= B.tu) {
+    // A 先
+    if (A.data[pa].i < B.data[pb].i ||
+        (A.data[pa].i == B.data[pb].i && A.data[pa].j < B.data[pb].j)) {
+      if (C.tu >= MAXSIZE)
+        return status::ERR;
+      C.data[++C.tu] = A.data[pa];
+      ++pa;
+      // A,B 位置相同
+    } else if (A.data[pa].i == B.data[pb].i && A.data[pa].j == B.data[pb].j) {
+      ElemType sum = A.data[pa].e + B.data[pb].e;
+      if (sum != 0) {
+        if (C.tu >= MAXSIZE)
+          return status::ERR;
+        C.data[++C.tu].i = A.data[pa].i;
+        C.data[C.tu].j = A.data[pa].j;
+        C.data[C.tu].e = sum;
+      }
+      ++pa;
+      ++pb;
+      // B先
+    } else {
+      if (C.tu >= MAXSIZE)
+        return status::ERR;
+      C.data[++C.tu] = B.data[pb];
+      ++pb;
+    }
+  }
+
+  while (pa <= A.tu) {
+    if (C.tu >= MAXSIZE)
+      return status::ERR;
+    C.data[++C.tu] = A.data[pa];
+    ++pa;
+  }
+
+  while (pb <= B.tu) {
+    if (C.tu >= MAXSIZE)
+      return status::ERR;
+    C.data[++C.tu] = B.data[pb];
+    ++pb;
+  }
+
   return status::OK;
 }

@@ -33,5 +33,6 @@ void createRpos(TSMatrix M);
 status FastTransposeSMatrix(TSMatrix M, TSMatrix &T);
 void TSMatrix2RLSMatrix(const TSMatrix &M, RLSMatrix &R);
 status matrixProduct(const TSMatrix &A, const TSMatrix &B, TSMatrix &C);
+status matrixAdd(const TSMatrix &A, const TSMatrix &B, TSMatrix &C);
 
 #endif // !TRIPLE_H_
