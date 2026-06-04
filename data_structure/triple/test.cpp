@@ -285,6 +285,112 @@ bool test_matrixProduct_emptyInput() {
   return st == status::OK && c.tu == 0;
 }
 
+bool test_matrixAdd_basic() {
+  // A(2x3):      B(2x3):      C=A+B(2x3):
+  //  1  0  3      0  2  0      1  2  3
+  //  0  4  0      5  0  6      5  4  6
+
+  TSMatrix a = makeMatrix(2, 3);
+  addElem(a, 1, 1, 1);
+  addElem(a, 1, 3, 3);
+  addElem(a, 2, 2, 4);
+
+  TSMatrix b = makeMatrix(2, 3);
+  addElem(b, 1, 2, 2);
+  addElem(b, 2, 1, 5);
+  addElem(b, 2, 3, 6);
+
+  TSMatrix c;
+  status st = matrixAdd(a, b, c);
+
+  std::cout << "[matrixAdd_basic] result:" << std::endl;
+  printMatrix(c);
+  printDense(c);
+
+  if (st != status::OK) return false;
+
+  TSMatrix expected = makeMatrix(2, 3);
+  addElem(expected, 1, 1, 1);
+  addElem(expected, 1, 2, 2);
+  addElem(expected, 1, 3, 3);
+  addElem(expected, 2, 1, 5);
+  addElem(expected, 2, 2, 4);
+  addElem(expected, 2, 3, 6);
+
+  return matrixEqual(c, expected);
+}
+
+bool test_matrixAdd_cancelToZero() {
+  // A(2x2):      B(2x2):      C=A+B(2x2):
+  //  3  0         -3  0         0  0
+  //  0  5          0  2         0  7
+
+  TSMatrix a = makeMatrix(2, 2);
+  addElem(a, 1, 1, 3);
+  addElem(a, 2, 2, 5);
+
+  TSMatrix b = makeMatrix(2, 2);
+  addElem(b, 1, 1, -3);
+  addElem(b, 2, 2, 2);
+
+  TSMatrix c;
+  status st = matrixAdd(a, b, c);
+
+  std::cout << "[matrixAdd_cancelToZero] result:" << std::endl;
+  printMatrix(c);
+  printDense(c);
+
+  if (st != status::OK) return false;
+
+  TSMatrix expected = makeMatrix(2, 2);
+  addElem(expected, 2, 2, 7);
+
+  return matrixEqual(c, expected);
+}
+
+bool test_matrixAdd_emptyPlusNonempty() {
+  // A(2x2):  all zeros
+  // B(2x2):  only B[1][2]=9
+  // C=A+B = B
+
+  TSMatrix a = makeMatrix(2, 2);
+  TSMatrix b = makeMatrix(2, 2);
+  addElem(b, 1, 2, 9);
+
+  TSMatrix c;
+  status st = matrixAdd(a, b, c);
+
+  std::cout << "[matrixAdd_emptyPlusNonempty] result:" << std::endl;
+  printMatrix(c);
+  printDense(c);
+
+  return st == status::OK && matrixEqual(c, b);
+}
+
+bool test_matrixAdd_dimensionMismatch() {
+  // A(2x3) + B(3x2): dimensions differ -> ERR
+  TSMatrix a = makeMatrix(2, 3);
+  TSMatrix b = makeMatrix(3, 2);
+  TSMatrix c;
+  status st = matrixAdd(a, b, c);
+  return st == status::ERR;
+}
+
+bool test_matrixAdd_bothEmpty() {
+  // A(3x3) empty + B(3x3) empty -> tu=0
+
+  TSMatrix a = makeMatrix(3, 3);
+  TSMatrix b = makeMatrix(3, 3);
+  TSMatrix c;
+  status st = matrixAdd(a, b, c);
+
+  std::cout << "[matrixAdd_bothEmpty] result:" << std::endl;
+  printMatrix(c);
+  printDense(c);
+
+  return st == status::OK && c.tu == 0 && c.mu == 3 && c.nu == 3;
+}
+
 int main() {
   check("createRpos_basic", test_createRpos_basic());
   check("createRpos_empty", test_createRpos_empty());
@@ -300,6 +406,11 @@ int main() {
   check("matrixProduct_sparseResult", test_matrixProduct_sparseResult());
   check("matrixProduct_dimensionMismatch", test_matrixProduct_dimensionMismatch());
   check("matrixProduct_emptyInput", test_matrixProduct_emptyInput());
+  check("matrixAdd_basic", test_matrixAdd_basic());
+  check("matrixAdd_cancelToZero", test_matrixAdd_cancelToZero());
+  check("matrixAdd_emptyPlusNonempty", test_matrixAdd_emptyPlusNonempty());
+  check("matrixAdd_dimensionMismatch", test_matrixAdd_dimensionMismatch());
+  check("matrixAdd_bothEmpty", test_matrixAdd_bothEmpty());
 
   std::cout << passed << " passed, " << failed << " failed" << std::endl;
   return failed > 0 ? 1 : 0;
