@@ -225,6 +225,39 @@ void Union_L(LinkedList &La, LinkedList &Lb) {
   }
 }
 
+void SubSet_L(LinkedList &La, LinkedList &Lb) {
+  if (!La || !Lb) {
+    return;
+  }
+
+  LinkedList head = La;
+  LinkedList p = La->next;
+  LinkedList pre = NULL;
+  LinkedList q = Lb->next;
+  while (p && q) {
+    while (q && q->data < p->data) {
+      q = q->next;
+    }
+    if (!q) {
+      break;
+    }
+    if (p->data != q->data) {
+      pre = p;
+      p = p->next;
+    } else {
+      LinkedList tmp = p;
+      pre->next = tmp->next;
+      p = p->next;
+      delete tmp;
+    }
+  }
+
+  while (head) {
+    cout << head->data << ' ';
+    head = head->next;
+  }
+}
+
 // 循环链表
 void Union_OL(LinkedList &La, LinkedList &Lb) {
   LNode *pa = La->next->next;

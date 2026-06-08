@@ -29,6 +29,10 @@ int main() {
   nC->rchild = nF;
   T = nA;
 
+  cout << "\n\n" << "searchBiTree";
+  searchBiTree(T, 'B');
+  cout << "\n\n";
+
   cout << "\n 2. Manual build: A(B(D,E),C(,F)) " << endl;
   Traverse(T);
   cout << "BiTreeEmpty: " << (BiTreeEmpty(T) ? "true" : "false")
