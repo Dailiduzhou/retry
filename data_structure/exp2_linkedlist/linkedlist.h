@@ -26,5 +26,6 @@ LNode *LocateElem_L(LinkedList L, ElemType e);
 void ListInsert_L(LinkedList &L, LNode *p, LNode *s);
 LinkedList ListInvert_L(LinkedList &L);
 void Union_L(LinkedList &La, LinkedList &Lb);
+void SubSet_L(LinkedList &La, LinkedList &Lb);
 
 #endif // !LINKEDLIST

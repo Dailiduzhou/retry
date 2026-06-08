@@ -291,3 +291,13 @@ BiNode *CreateBiNode(TElemType value) {
   newNode->lchild = newNode->rchild = nullptr;
   return newNode;
 }
+
+void searchBiTree(const BiTree &t, TElemType val) {
+  if (t) {
+    if (t->data == val) {
+      Preorder(t, PrintNode);
+    }
+    searchBiTree(t->lchild, val);
+    searchBiTree(t->rchild, val);
+  }
+}
