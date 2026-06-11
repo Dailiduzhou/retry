@@ -12,4 +12,10 @@ int main() {
 
   ListDelete(l, 2);
   ListTraverse(l);
+
+  ListDelete(l, 3);
+  ListTraverse(l);
+
+  ListDelete(l, 1);
+  ListTraverse(l);
 }
