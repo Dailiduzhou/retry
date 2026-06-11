@@ -40,35 +40,57 @@ void ListDelete(LinkList &L, ElemType val) {
     return;
   }
 
-  int len = ListLength(L);
+  // int len = ListLength(L);
+  // LNode *pre = L.tail;
+  // LNode *cur = head;
+  //
+  // for (int i = 0; i < len; i++) {
+  //   if (cur->data == val) {
+  //     LNode *next = cur->next;
+  //     bool isLastNode = (cur->next == cur);
+  //     bool wasTail = (cur == L.tail);
+  //
+  //     pre->next = next;
+  //
+  //     if (isLastNode) {
+  //       delete cur;
+  //       L.tail = nullptr;
+  //       return;
+  //     }
+  //
+  //     if (wasTail) {
+  //       L.tail = pre;
+  //     }
+  //
+  //     delete cur;
+  //     cur = next;
+  //   } else {
+  //     pre = cur;
+  //     cur = cur->next;
+  //   }
+  // }
   LNode *pre = L.tail;
   LNode *cur = head;
-
-  for (int i = 0; i < len; i++) {
+  do {
     if (cur->data == val) {
       LNode *next = cur->next;
-      bool isLastNode = (cur->next == cur);
-      bool wasTail = (cur == L.tail);
-
       pre->next = next;
+      if (cur == L.tail) {
+        L.tail = pre;
+      }
 
-      if (isLastNode) {
+      if (next == cur) {
         delete cur;
         L.tail = nullptr;
         return;
       }
-
-      if (wasTail) {
-        L.tail = pre;
-      }
-
       delete cur;
       cur = next;
     } else {
       pre = cur;
       cur = cur->next;
     }
-  }
+  } while (cur != head);
 }
 
 int ListLength(LinkList &L) {
