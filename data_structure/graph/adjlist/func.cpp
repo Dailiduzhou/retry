@@ -258,7 +258,9 @@ bool DFS(ALGraph &G, int v, vector<bool> &visited, bool (*visit)(VNode)) {
   for (ArcNode *p = G.vertices[v].firstarc; p; p = p->nextarc) {
     int w = p->adjvex;
     if (!visited[w]) {
-      DFS(G, w, visited, visit);
+      if (!DFS(G, w, visited, visit)) {
+        return false;
+      }
     }
   }
   return true;
