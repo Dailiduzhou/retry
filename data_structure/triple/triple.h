@@ -30,6 +30,7 @@ typedef struct {
 enum class status : int { OK = 0, ERR = 1 };
 
 void createRpos(TSMatrix M);
+status NaiveTransposeSMatrix(TSMatrix M, TSMatrix &T);
 status FastTransposeSMatrix(TSMatrix M, TSMatrix &T);
 void TSMatrix2RLSMatrix(const TSMatrix &M, RLSMatrix &R);
 status matrixProduct(const TSMatrix &A, const TSMatrix &B, TSMatrix &C);
