@@ -11,7 +11,10 @@ struct Student {
   std::string name;
   std::string gender;
   std::string className;
-  double score = 0.0;
+  int chinese = 0;
+  int math = 0;
+  int english = 0;
+  int total = 0;
   bool deleted = false;
 };
 

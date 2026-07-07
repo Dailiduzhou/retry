@@ -6,8 +6,9 @@ namespace studentmgr {
 
 namespace {
 
-// Reads columns of a SELECT id, name, gender, class, score, deleted projection
-// from the currently-stepped statement into a Student.
+// Reads columns of a SELECT id, name, gender, class, chinese, math, english,
+// total, deleted projection from the currently-stepped statement into a
+// Student.
 Student readRow(sqlite3_stmt *stmt) {
   Student s;
   s.id = sqlite3_column_int(stmt, 0);
@@ -17,8 +18,11 @@ Student readRow(sqlite3_stmt *stmt) {
   s.gender = gender ? reinterpret_cast<const char *>(gender) : "";
   const unsigned char *cls = sqlite3_column_text(stmt, 3);
   s.className = cls ? reinterpret_cast<const char *>(cls) : "";
-  s.score = sqlite3_column_double(stmt, 4);
-  s.deleted = sqlite3_column_int(stmt, 5) != 0;
+  s.chinese = sqlite3_column_int(stmt, 4);
+  s.math = sqlite3_column_int(stmt, 5);
+  s.english = sqlite3_column_int(stmt, 6);
+  s.total = sqlite3_column_int(stmt, 7);
+  s.deleted = sqlite3_column_int(stmt, 8) != 0;
   return s;
 }
 
@@ -39,34 +43,28 @@ void StudentManager::initSchema() {
     return;
   }
   std::string err;
-  // Fresh-table schema with all columns.
   db_.exec("CREATE TABLE IF NOT EXISTS students ("
            "  id      INTEGER PRIMARY KEY AUTOINCREMENT,"
            "  name    TEXT    NOT NULL,"
            "  gender  TEXT    NOT NULL DEFAULT '',"
            "  class   TEXT    NOT NULL DEFAULT '',"
-           "  score   REAL    NOT NULL,"
+           "  chinese INTEGER NOT NULL DEFAULT 0,"
+           "  math    INTEGER NOT NULL DEFAULT 0,"
+           "  english INTEGER NOT NULL DEFAULT 0,"
+           "  total   INTEGER NOT NULL DEFAULT 0,"
            "  deleted INTEGER NOT NULL DEFAULT 0"
            ");",
            err);
-  // Migrate legacy tables that lack the new columns; ignore errors when the
-  // column already exists ("duplicate column name").
-  std::string ignore;
-  db_.exec("ALTER TABLE students ADD COLUMN gender TEXT NOT NULL DEFAULT ''",
-           ignore);
-  db_.exec("ALTER TABLE students ADD COLUMN class TEXT NOT NULL DEFAULT ''",
-           ignore);
-  db_.exec("ALTER TABLE students ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0",
-           ignore);
-  // Any pre-existing rows are treated as live (deleted=0) by the DEFAULT.
 }
 
 bool StudentManager::addStudent(const std::string &name,
                                 const std::string &gender,
-                                const std::string &className, double score,
-                                std::string &errMsg) {
-  Statement stmt(db_.raw(), "INSERT INTO students (name, gender, class, score) "
-                            "VALUES (?, ?, ?, ?);");
+                                const std::string &className, int chinese,
+                                int math, int english, std::string &errMsg) {
+  Statement stmt(db_.raw(),
+                 "INSERT INTO students"
+                 " (name, gender, class, chinese, math, english, total)"
+                 " VALUES (?, ?, ?, ?, ?, ?, ?);");
   if (!stmt.valid()) {
     errMsg = "failed to prepare INSERT statement";
     return false;
@@ -74,7 +72,10 @@ bool StudentManager::addStudent(const std::string &name,
   sqlite3_bind_text(stmt.raw(), 1, name.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt.raw(), 2, gender.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt.raw(), 3, className.c_str(), -1, SQLITE_TRANSIENT);
-  sqlite3_bind_double(stmt.raw(), 4, score);
+  sqlite3_bind_int(stmt.raw(), 4, chinese);
+  sqlite3_bind_int(stmt.raw(), 5, math);
+  sqlite3_bind_int(stmt.raw(), 6, english);
+  sqlite3_bind_int(stmt.raw(), 7, chinese + math + english);
   int rc = stmt.step();
   if (rc != SQLITE_DONE) {
     errMsg = sqlite3_errmsg(db_.raw());
@@ -124,15 +125,20 @@ bool StudentManager::restoreStudent(int id, std::string &errMsg) {
   return true;
 }
 
-bool StudentManager::updateScore(int id, double score, std::string &errMsg) {
-  Statement stmt(db_.raw(), "UPDATE students SET score = ? "
-                            "WHERE id = ? AND deleted = 0;");
+bool StudentManager::updateScores(int id, int chinese, int math, int english,
+                                  std::string &errMsg) {
+  Statement stmt(db_.raw(),
+                 "UPDATE students SET chinese = ?, math = ?, english = ?,"
+                 " total = ? WHERE id = ? AND deleted = 0;");
   if (!stmt.valid()) {
     errMsg = "failed to prepare UPDATE statement";
     return false;
   }
-  sqlite3_bind_double(stmt.raw(), 1, score);
-  sqlite3_bind_int(stmt.raw(), 2, id);
+  sqlite3_bind_int(stmt.raw(), 1, chinese);
+  sqlite3_bind_int(stmt.raw(), 2, math);
+  sqlite3_bind_int(stmt.raw(), 3, english);
+  sqlite3_bind_int(stmt.raw(), 4, chinese + math + english);
+  sqlite3_bind_int(stmt.raw(), 5, id);
   int rc = stmt.step();
   if (rc != SQLITE_DONE) {
     errMsg = sqlite3_errmsg(db_.raw());
@@ -146,8 +152,10 @@ bool StudentManager::updateScore(int id, double score, std::string &errMsg) {
 }
 
 bool StudentManager::queryById(int id, Student &out, std::string &errMsg) {
-  Statement stmt(db_.raw(), "SELECT id, name, gender, class, score, deleted "
-                            "FROM students WHERE id = ? AND deleted = 0;");
+  Statement stmt(
+      db_.raw(),
+      "SELECT id, name, gender, class, chinese, math, english, total, deleted "
+      "FROM students WHERE id = ? AND deleted = 0;");
   if (!stmt.valid()) {
     errMsg = "failed to prepare SELECT statement";
     return false;
@@ -165,8 +173,10 @@ bool StudentManager::queryById(int id, Student &out, std::string &errMsg) {
 
 std::vector<Student> StudentManager::queryAll(std::string &errMsg) {
   std::vector<Student> result;
-  Statement stmt(db_.raw(), "SELECT id, name, gender, class, score, deleted "
-                            "FROM students WHERE deleted = 0 ORDER BY id;");
+  Statement stmt(
+      db_.raw(),
+      "SELECT id, name, gender, class, chinese, math, english, total, deleted "
+      "FROM students WHERE deleted = 0 ORDER BY id;");
   if (!stmt.valid()) {
     errMsg = "failed to prepare SELECT statement";
     return result;
@@ -178,14 +188,16 @@ std::vector<Student> StudentManager::queryAll(std::string &errMsg) {
 }
 
 std::vector<Student> StudentManager::queryAllScores(std::string &errMsg) {
-  // Same projection; the menu formats the score column prominently.
+  // Same projection; the menu formats the score columns prominently.
   return queryAll(errMsg);
 }
 
 std::vector<Student> StudentManager::queryDeleted(std::string &errMsg) {
   std::vector<Student> result;
-  Statement stmt(db_.raw(), "SELECT id, name, gender, class, score, deleted "
-                            "FROM students WHERE deleted = 1 ORDER BY id;");
+  Statement stmt(
+      db_.raw(),
+      "SELECT id, name, gender, class, chinese, math, english, total, deleted "
+      "FROM students WHERE deleted = 1 ORDER BY id;");
   if (!stmt.valid()) {
     errMsg = "failed to prepare SELECT statement";
     return result;
@@ -200,11 +212,12 @@ std::vector<Student> StudentManager::sort(SortOrder order,
                                           std::string &errMsg) {
   std::vector<Student> result;
   const char *sql =
-      (order == ByScore)
-          ? "SELECT id, name, gender, class, score, deleted "
-            "FROM students WHERE deleted = 0 ORDER BY score DESC, id ASC;"
-          : "SELECT id, name, gender, class, score, deleted "
-            "FROM students WHERE deleted = 0 ORDER BY id ASC;";
+      (order == ByTotal)
+          ? "SELECT id, name, gender, class, chinese, math, english, total, "
+            "deleted FROM students WHERE deleted = 0 "
+            "ORDER BY total DESC, id ASC;"
+          : "SELECT id, name, gender, class, chinese, math, english, total, "
+            "deleted FROM students WHERE deleted = 0 ORDER BY id ASC;";
   Statement stmt(db_.raw(), sql);
   if (!stmt.valid()) {
     errMsg = "failed to prepare SELECT statement";
@@ -216,26 +229,30 @@ std::vector<Student> StudentManager::sort(SortOrder order,
   return result;
 }
 
-double StudentManager::allAverage(std::string &errMsg, bool &ok) {
-  ok = false;
+bool StudentManager::overallAverage(ClassStats &out, std::string &errMsg) {
   Statement stmt(db_.raw(),
-                 "SELECT AVG(score) FROM students WHERE deleted = 0;");
+                 "SELECT COUNT(*), AVG(chinese), AVG(math), AVG(english),"
+                 " AVG(total) FROM students WHERE deleted = 0;");
   if (!stmt.valid()) {
     errMsg = "failed to prepare AVG statement";
-    return 0.0;
+    return false;
   }
   int rc = stmt.step();
   if (rc != SQLITE_ROW) {
     errMsg = (rc == SQLITE_DONE) ? "no students recorded"
                                  : sqlite3_errmsg(db_.raw());
-    return 0.0;
+    return false;
   }
-  if (sqlite3_column_type(stmt.raw(), 0) == SQLITE_NULL) {
+  out.count = sqlite3_column_int(stmt.raw(), 0);
+  if (out.count == 0) {
     errMsg = "no students recorded";
-    return 0.0;
+    return false;
   }
-  ok = true;
-  return sqlite3_column_double(stmt.raw(), 0);
+  out.chinese = sqlite3_column_double(stmt.raw(), 1);
+  out.math = sqlite3_column_double(stmt.raw(), 2);
+  out.english = sqlite3_column_double(stmt.raw(), 3);
+  out.total = sqlite3_column_double(stmt.raw(), 4);
+  return true;
 }
 
 } // namespace studentmgr

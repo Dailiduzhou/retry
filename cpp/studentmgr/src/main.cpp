@@ -6,6 +6,7 @@
 #include "Student.h"
 #include "StudentManager.h"
 
+using studentmgr::ClassStats;
 using studentmgr::Student;
 using studentmgr::StudentManager;
 
@@ -19,9 +20,9 @@ void printMenu() {
             << "4. 按学号查询\n"
             << "5. 查询所有学生信息\n"
             << "6. 查询所有成绩\n"
-            << "7. 按成绩排序\n"
+            << "7. 按总分排序\n"
             << "8. 按学号排序\n"
-            << "9. 统计平均成绩\n"
+            << "9. 统计全体平均分\n"
             << "10. 恢复已删除学生\n"
             << "11. 查看已删除学生\n"
             << "0. 退出\n"
@@ -33,10 +34,11 @@ void clearLine() {
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-double readScore() {
-  double v;
+int readInt(const char *prompt) {
+  std::cout << prompt;
+  int v;
   while (!(std::cin >> v) || v < 0) {
-    std::cout << "成绩无效，请重新输入: ";
+    std::cout << "数值无效，请重新输入: ";
     clearLine();
   }
   clearLine();
@@ -66,9 +68,12 @@ std::string readToken(const char *prompt) {
 }
 
 void printHeader() {
-  std::cout << "----------------------------------------------------\n"
-            << "学号  姓名         性别       班级          成绩\n"
-            << "----------------------------------------------------\n";
+  std::cout << "-----------------------------------------------------"
+               "-------------------\n"
+            << "学号  姓名        性别    班级        语文  数学  "
+               "英语  总分\n"
+            << "-----------------------------------------------------"
+               "-------------------\n";
 }
 
 void printStudents(const std::vector<Student> &list) {
@@ -103,11 +108,14 @@ int main() {
       std::string name = readToken("请输入姓名: ");
       std::string gender = readToken("请输入性别 (男/女): ");
       std::string className = readToken("请输入班级: ");
-      std::cout << "请输入成绩: ";
-      double score = readScore();
+      int chinese = readInt("请输入语文成绩: ");
+      int math = readInt("请输入数学成绩: ");
+      int english = readInt("请输入英语成绩: ");
       errMsg.clear();
-      if (mgr.addStudent(name, gender, className, score, errMsg)) {
-        std::cout << "录入成功，新学号为 " << mgr.lastInsertId() << "\n";
+      if (mgr.addStudent(name, gender, className, chinese, math, english,
+                         errMsg)) {
+        std::cout << "录入成功，新学号为 " << mgr.lastInsertId() << "，总分 "
+                  << (chinese + math + english) << "\n";
       } else {
         std::cout << "录入失败: " << errMsg << "\n";
       }
@@ -125,10 +133,11 @@ int main() {
     }
     case 3: {
       int id = readId("请输入要修改的学号: ");
-      std::cout << "请输入新的成绩: ";
-      double score = readScore();
+      int chinese = readInt("请输入新的语文成绩: ");
+      int math = readInt("请输入新的数学成绩: ");
+      int english = readInt("请输入新的英语成绩: ");
       errMsg.clear();
-      if (mgr.updateScore(id, score, errMsg)) {
+      if (mgr.updateScores(id, chinese, math, english, errMsg)) {
         std::cout << "修改成功\n";
       } else {
         std::cout << "修改失败: " << errMsg << "\n";
@@ -173,7 +182,7 @@ int main() {
     }
     case 7: {
       errMsg.clear();
-      std::vector<Student> list = mgr.sort(StudentManager::ByScore, errMsg);
+      std::vector<Student> list = mgr.sort(StudentManager::ByTotal, errMsg);
       if (!errMsg.empty()) {
         std::cout << "排序失败: " << errMsg << "\n";
       } else if (list.empty()) {
@@ -197,12 +206,15 @@ int main() {
     }
     case 9: {
       errMsg.clear();
-      bool ok = false;
-      double avg = mgr.allAverage(errMsg, ok);
-      if (ok) {
+      ClassStats stats;
+      if (mgr.overallAverage(stats, errMsg)) {
         std::cout.setf(std::ios::fixed);
         std::cout.precision(2);
-        std::cout << "平均成绩: " << avg << "\n";
+        std::cout << "学生人数: " << stats.count << "\n"
+                  << "语文平均: " << stats.chinese << "\n"
+                  << "数学平均: " << stats.math << "\n"
+                  << "英语平均: " << stats.english << "\n"
+                  << "总分平均: " << stats.total << "\n";
       } else {
         std::cout << "统计失败: " << errMsg << "\n";
       }

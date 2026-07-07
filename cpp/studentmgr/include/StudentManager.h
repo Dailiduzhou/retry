@@ -9,9 +9,18 @@
 
 namespace studentmgr {
 
+// Aggregate statistics over live (non-deleted) students.
+struct ClassStats {
+  int count = 0;
+  double chinese = 0.0;
+  double math = 0.0;
+  double english = 0.0;
+  double total = 0.0;
+};
+
 class StudentManager {
 public:
-  enum SortOrder { ByScore, ById };
+  enum SortOrder { ByTotal, ById };
 
   explicit StudentManager(const std::string &dbPath = "students.db");
 
@@ -20,11 +29,12 @@ public:
 
   // Information management.
   bool addStudent(const std::string &name, const std::string &gender,
-                  const std::string &className, double score,
-                  std::string &errMsg);
+                  const std::string &className, int chinese, int math,
+                  int english, std::string &errMsg);
   bool deleteStudent(int id, std::string &errMsg);  // soft delete
   bool restoreStudent(int id, std::string &errMsg); // undo soft delete
-  bool updateScore(int id, double score, std::string &errMsg);
+  bool updateScores(int id, int chinese, int math, int english,
+                    std::string &errMsg);
 
   // Queries (only non-deleted rows).
   bool queryById(int id, Student &out, std::string &errMsg);
@@ -34,7 +44,7 @@ public:
 
   // Data processing (only non-deleted rows).
   std::vector<Student> sort(SortOrder order, std::string &errMsg);
-  double allAverage(std::string &errMsg, bool &ok);
+  bool overallAverage(ClassStats &out, std::string &errMsg);
 
 private:
   void initSchema();
