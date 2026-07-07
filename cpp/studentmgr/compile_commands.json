@@ -1,0 +1,21 @@
+[
+{
+  "directory": "/home/mikufan/code/retry/cpp/studentmgr",
+  "arguments": ["/usr/bin/g++", "-c", "-m64", "-g", "-Wall", "-Wextra", "-O0", "-std=c++11", "-Iinclude", "-o", "build/.objs/studentmgr/linux/x86_64/debug/src/Database.cpp.o", "src/Database.cpp"],
+  "file": "src/Database.cpp"
+},
+{
+  "directory": "/home/mikufan/code/retry/cpp/studentmgr",
+  "arguments": ["/usr/bin/g++", "-c", "-m64", "-g", "-Wall", "-Wextra", "-O0", "-std=c++11", "-Iinclude", "-o", "build/.objs/studentmgr/linux/x86_64/debug/src/Student.cpp.o", "src/Student.cpp"],
+  "file": "src/Student.cpp"
+},
+{
+  "directory": "/home/mikufan/code/retry/cpp/studentmgr",
+  "arguments": ["/usr/bin/g++", "-c", "-m64", "-g", "-Wall", "-Wextra", "-O0", "-std=c++11", "-Iinclude", "-o", "build/.objs/studentmgr/linux/x86_64/debug/src/main.cpp.o", "src/main.cpp"],
+  "file": "src/main.cpp"
+},
+{
+  "directory": "/home/mikufan/code/retry/cpp/studentmgr",
+  "arguments": ["/usr/bin/g++", "-c", "-m64", "-g", "-Wall", "-Wextra", "-O0", "-std=c++11", "-Iinclude", "-o", "build/.objs/studentmgr/linux/x86_64/debug/src/StudentManager.cpp.o", "src/StudentManager.cpp"],
+  "file": "src/StudentManager.cpp"
+}]
