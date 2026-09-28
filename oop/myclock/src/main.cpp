@@ -1,7 +1,10 @@
+#include <chrono>
 #include <ctime>
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <vector>
 
 using namespace std;
@@ -20,7 +23,10 @@ public:
     this->S = S;
   }
 
-  void ShowTime() const { cout << H << ":" << M << ":" << S << endl; }
+  void ShowTime() const {
+    cout << setw(2) << setfill('0') << H << ":" << setw(2) << M << ":"
+         << setw(2) << S << endl;
+  }
 
 private:
   int H;
@@ -107,7 +113,9 @@ public:
     }
 
     alarms[id - 1] = Alarm(h, m, s, name);
-    cout << "闹钟 # " << id << endl << "闹钟名: " << name << " 已设置";
+    cout << "闹钟 # " << id << endl
+         << "闹钟名: " << name << " 已设置" << "(时间:" << h << " 时 " << m
+         << " 分 " << s << " 秒" << ')' << endl;
   }
 
   // 启动闹钟
@@ -143,10 +151,10 @@ public:
         }
       }
 
-      // 等待系统时间进入下一秒
-      while (time(nullptr) == now) {
-        // 空循环等待
-      }
+      // 睡眠等待系统时间进入下一秒（避免空转占用 CPU）
+      do {
+        this_thread::sleep_for(chrono::milliseconds(50));
+      } while (time(nullptr) == now);
     }
   }
 };
@@ -157,6 +165,7 @@ int main() {
 
     myClock.setAlarm(1, 7, 0, 0, "起床");
     myClock.setAlarm(2, 7, 0, 10, "开手机");
+    myClock.setAlarm(3, 7, 0, 30, "刷牙");
 
     // myClock.setAlarm(3, 25, 0, 0, "错误小时");
     // myClock.setAlarm(4, 7, 70, 0, "错误分钟");
