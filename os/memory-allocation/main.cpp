@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <alloca.h>
 #include <cctype>
 #include <cstddef>
 #include <fstream>
@@ -216,8 +215,7 @@ void printSimulation(const std::vector<FreeBlock> &initial_blocks,
     const Allocation &allocation = step.allocation;
     std::cout << allocation.name << "\t" << allocation.need_size << "\t";
     if (allocation.success) {
-      std::cout << allocation.start << "\t" << allocation.size
-                << "\t已分配\n";
+      std::cout << allocation.start << "\t" << allocation.size << "\t已分配\n";
     } else {
       std::cout << "-\t-\t分配失败\n";
     }
@@ -334,8 +332,7 @@ bool readWorkload(const std::string &path, std::vector<FreeBlock> &free_blocks,
       Request request;
       if (!(iss >> request.name >> request.need_size)) {
         std::cout << "第 " << line_number
-                  << " 行已忽略 (格式应为: 进程名 请求大小): " << line
-                  << "\n";
+                  << " 行已忽略 (格式应为: 进程名 请求大小): " << line << "\n";
         continue;
       }
       if (request.need_size <= 0 || request.need_size > kMaxAddress) {
@@ -379,12 +376,13 @@ int main(int argc, char *argv[]) {
   printInput(free_blocks, requests);
 
   while (true) {
-    std::cout << "请选择一种分区分配算法: \n"
-              << "(1)首次适应算法 (FIRST FIT)\n"
-              << "(2)最佳适应算法 (BEST FIT)\n" // 三种算法共用一套代码, 只换选择规则
-              << "(3)最坏适应算法 (WORST FIT)\n"
-              << "(4)三种算法全部输出\n"
-              << "(0)退出\n";
+    std::cout
+        << "请选择一种分区分配算法: \n"
+        << "(1)首次适应算法 (FIRST FIT)\n"
+        << "(2)最佳适应算法 (BEST FIT)\n" // 三种算法共用一套代码, 只换选择规则
+        << "(3)最坏适应算法 (WORST FIT)\n"
+        << "(4)三种算法全部输出\n"
+        << "(0)退出\n";
     int choice = 0;
     if (!(std::cin >> choice)) {
       break;
